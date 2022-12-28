@@ -4,7 +4,7 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 public class ArrayStorage {
-    private final int RESUME_LIMIT = 10000;
+    static private final int RESUME_LIMIT = 10000;
     Resume[] storage = new Resume[RESUME_LIMIT];
     private int size;
 
@@ -16,6 +16,7 @@ public class ArrayStorage {
     void save(Resume r) {
         if (size >= RESUME_LIMIT) {
             System.out.println("Хранилище переполненно");
+            return;
         }
         int index = findPosition(r.toString());
         if (index < 0) {
@@ -32,7 +33,6 @@ public class ArrayStorage {
                 return storage[i];
             }
         }
-
         return null;
     }
 
@@ -40,6 +40,7 @@ public class ArrayStorage {
         int index = findPosition(uuid);
         if (index < 0) {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
+            return;
         }
         size--;
         System.arraycopy(storage, index + 1, storage, index, size - index);
