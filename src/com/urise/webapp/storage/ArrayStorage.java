@@ -1,3 +1,7 @@
+package com.urise.webapp.storage;
+
+import com.urise.webapp.model.Resume;
+
 import java.util.Arrays;
 
 /**
@@ -8,17 +12,17 @@ public class ArrayStorage {
     Resume[] storage = new Resume[RESUME_LIMIT];
     private int size;
 
-    void clear() {
+    public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
-    void save(Resume r) {
+    public void save(Resume r) {
         if (size >= RESUME_LIMIT) {
             System.out.println("Хранилище переполненно");
             return;
         }
-        int index = findPosition(r.toString());
+        int index = findPosition(r.getUuid());
         if (index < 0) {
             storage[size] = r;
             size++;
@@ -27,16 +31,16 @@ public class ArrayStorage {
         }
     }
 
-    Resume get(String uuid) {
+    public Resume get(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].toString().equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid) ) {
                 return storage[i];
             }
         }
         return null;
     }
 
-    void delete(String uuid) {
+    public void delete(String uuid) {
         int index = findPosition(uuid);
         if (index < 0) {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
@@ -48,7 +52,7 @@ public class ArrayStorage {
 
     private int findPosition(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].toString().equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid)) {
                 return i;
             }
         }
@@ -58,11 +62,11 @@ public class ArrayStorage {
     /**
      * @return array, contains only Resumes in storage (without null)
      */
-    Resume[] getAll() {
+    public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    int size() {
+    public int size() {
         return size;
     }
 }
