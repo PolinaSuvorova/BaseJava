@@ -17,11 +17,18 @@ public class ArrayStorage {
         size = 0;
     }
 
-    public void update(String uuid) {
+    public void update(String uuid, String uuidTo) {
         int index = findPosition(uuid);
         if (index < 0) {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
-           }
+            return;
+        }
+        int indexTo = findPosition(uuidTo);
+        if (indexTo >= 0) {
+            System.out.printf("Резюме с uuid %s уже существует%n", uuidTo);
+            return;
+        }
+        storage[index].setUuid(uuidTo);
     }
 
     public void save(Resume r) {
@@ -34,7 +41,7 @@ public class ArrayStorage {
             storage[size] = r;
             size++;
         } else {
-            System.out.printf("Резюме с uuid %s уже существует%n", r);
+            System.out.printf("Резюме с uuid %s уже существует%n", r.getUuid());
         }
     }
 

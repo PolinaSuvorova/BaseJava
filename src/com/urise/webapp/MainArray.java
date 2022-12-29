@@ -19,15 +19,22 @@ public class MainArray {
         Resume r;
         while (true) {
             System.out.print("Введите одну из команд - (list | size | save uuid | delete uuid | " +
-                    "get uuid | clear | exit | update): ");
+                    "get uuid | clear | exit | update uuid uuidTo): ");
             String[] params = reader.readLine().trim().toLowerCase().split(" ");
-            if (params.length < 1 || params.length > 2) {
+            if (params.length < 1 || params.length > 3) {
+                System.out.println("Неверная команда.");
+                continue;
+            } else if (!params[0].intern().equals("update") && params.length > 2) {
                 System.out.println("Неверная команда.");
                 continue;
             }
             String uuid = null;
-            if (params.length == 2) {
+            String uuidTo = null;
+            if (params.length != 1) {
                 uuid = params[1].intern();
+            }
+            if (params.length == 3) {
+                uuidTo = params[2].intern();
             }
             switch (params[0]) {
                 case "list":
@@ -47,7 +54,7 @@ public class MainArray {
                     printAll();
                     break;
                 case "update":
-                    ARRAY_STORAGE.update(uuid);
+                    ARRAY_STORAGE.update(uuid, uuidTo);
                     printAll();
                     break;
                 case "get":
