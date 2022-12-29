@@ -17,6 +17,13 @@ public class ArrayStorage {
         size = 0;
     }
 
+    public void update(String uuid) {
+        int index = findPosition(uuid);
+        if (index < 0) {
+            System.out.printf("Резюме с uuid %s не найдено%n", uuid);
+           }
+    }
+
     public void save(Resume r) {
         if (size >= RESUME_LIMIT) {
             System.out.println("Хранилище переполненно");
@@ -33,7 +40,7 @@ public class ArrayStorage {
 
     public Resume get(String uuid) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid) ) {
+            if (storage[i].getUuid().equals(uuid)) {
                 return storage[i];
             }
         }
@@ -50,15 +57,6 @@ public class ArrayStorage {
         System.arraycopy(storage, index + 1, storage, index, size - index);
     }
 
-    private int findPosition(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return i;
-            }
-        }
-        return -1;
-    }
-
     /**
      * @return array, contains only Resumes in storage (without null)
      */
@@ -68,5 +66,14 @@ public class ArrayStorage {
 
     public int size() {
         return size;
+    }
+
+    private int findPosition(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
