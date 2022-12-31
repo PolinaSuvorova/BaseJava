@@ -28,8 +28,10 @@ public class MainArray {
                 System.out.println("Неверная команда.");
                 continue;
             }
+
             String uuid = null;
             String uuidTo = null;
+
             if (params.length != 1) {
                 uuid = params[1].intern();
             }
@@ -54,7 +56,10 @@ public class MainArray {
                     printAll();
                     break;
                 case "update":
-                    ARRAY_STORAGE.update(uuid, uuidTo);
+                    Resume resumeTo = ARRAY_STORAGE.get(uuidTo);
+                    if (resumeTo != null) {
+                        ARRAY_STORAGE.update(uuid, resumeTo);
+                    }
                     printAll();
                     break;
                 case "get":

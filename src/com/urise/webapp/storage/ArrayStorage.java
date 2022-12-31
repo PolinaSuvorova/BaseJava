@@ -17,41 +17,33 @@ public class ArrayStorage {
         size = 0;
     }
 
-    public void update(String uuid, String uuidTo) {
+    public void update(String uuid, Resume resume) {
         int index = findPosition(uuid);
         if (index < 0) {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
             return;
         }
-        int indexTo = findPosition(uuidTo);
-        if (indexTo >= 0) {
-            System.out.printf("Резюме с uuid %s уже существует%n", uuidTo);
-            return;
-        }
-        storage[index].setUuid(uuidTo);
+        storage[index] = resume;
     }
 
-    public void save(Resume r) {
-        if (size >= RESUME_LIMIT) {
-            System.out.println("Хранилище переполненно");
-            return;
-        }
-        int index = findPosition(r.getUuid());
+    public void save(Resume resume) {
+        int index = findPosition(resume.getUuid());
         if (index < 0) {
-            storage[size] = r;
+            storage[size] = resume;
             size++;
-        } else {
-            System.out.printf("Резюме с uuid %s уже существует%n", r.getUuid());
-        }
+        } else if (size >= RESUME_LIMIT) {
+            System.out.println("Хранилище переполненно");
+        } else
+            System.out.printf("Резюме с uuid %s уже существует%n", resume.getUuid());
     }
 
     public Resume get(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return storage[i];
-            }
+        int index = findPosition(uuid);
+        if (index < 0) {
+            return null;
+        } else {
+            return storage[index];
         }
-        return null;
     }
 
     public void delete(String uuid) {
@@ -60,8 +52,9 @@ public class ArrayStorage {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
             return;
         }
+        storage[index] = storage[size];
+        storage[size] = null;
         size--;
-        System.arraycopy(storage, index + 1, storage, index, size - index);
     }
 
     /**
