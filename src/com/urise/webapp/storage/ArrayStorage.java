@@ -46,7 +46,6 @@ public class ArrayStorage {
         }
     }
 
-
     public void delete(String uuid) {
         int index = findPosition(uuid);
         if (index < 0) {
