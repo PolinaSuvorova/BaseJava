@@ -7,6 +7,7 @@ import java.util.Arrays;
 /**
  * Array based storage for Resumes
  */
+
 public class ArrayStorage {
     static private final int RESUME_LIMIT = 10000;
     Resume[] storage = new Resume[RESUME_LIMIT];
@@ -18,7 +19,7 @@ public class ArrayStorage {
     }
 
     public void update(String uuid, Resume resume) {
-        int index = findPosition(uuid);
+        int index = getIndex(uuid);
         if (index < 0) {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
             return;
@@ -27,18 +28,18 @@ public class ArrayStorage {
     }
 
     public void save(Resume resume) {
-        int index = findPosition(resume.getUuid());
-        if (index < 0) {
+        if (getIndex(resume.getUuid()) < 0) {
             storage[size] = resume;
             size++;
         } else if (size >= RESUME_LIMIT) {
             System.out.println("Хранилище переполненно");
-        } else
+        } else {
             System.out.printf("Резюме с uuid %s уже существует%n", resume.getUuid());
+        }
     }
 
     public Resume get(String uuid) {
-        int index = findPosition(uuid);
+        int index = getIndex(uuid);
         if (index < 0) {
             return null;
         } else {
@@ -47,7 +48,7 @@ public class ArrayStorage {
     }
 
     public void delete(String uuid) {
-        int index = findPosition(uuid);
+        int index = getIndex(uuid);
         if (index < 0) {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
             return;
@@ -68,7 +69,7 @@ public class ArrayStorage {
         return size;
     }
 
-    private int findPosition(String uuid) {
+    private int getIndex(String uuid) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
                 return i;
