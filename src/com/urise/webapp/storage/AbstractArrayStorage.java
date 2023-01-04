@@ -8,7 +8,19 @@ import java.util.Arrays;
  * Array based storage for Resumes
  */
 
-public class ArrayStorage extends AbstractArrayStorage {
+public abstract class AbstractArrayStorage implements Storage {
+    static protected final int RESUME_LIMIT = 10000;
+    protected Resume[] storage = new Resume[RESUME_LIMIT];
+    protected int size;
+
+    public int size() {
+        return size;
+    }
+
+    public void clear() {
+        Arrays.fill(storage, 0, size, null);
+        size = 0;
+    }
 
     public void update(String uuid, Resume resume) {
         int index = getIndex(uuid);
@@ -16,17 +28,20 @@ public class ArrayStorage extends AbstractArrayStorage {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
             return;
         }
-        storage[index] = resume;
+        updateResume(index,resume);
     }
 
     public void save(Resume resume) {
-        if (getIndex(resume.getUuid()) < 0) {
-            storage[size] = resume;
-            size++;
-        } else if (size >= RESUME_LIMIT) {
+        if (size >= RESUME_LIMIT) {
             System.out.println("Хранилище переполненно");
         } else {
-            System.out.printf("Резюме с uuid %s уже существует%n", resume.getUuid());
+            int index = getIndex(resume.getUuid());
+            if (index < 0) {
+                insertResume(index,resume);
+                size++;
+            } else {
+                System.out.printf("Резюме с uuid %s уже существует%n", resume.getUuid());
+            }
         }
     }
 
@@ -45,8 +60,7 @@ public class ArrayStorage extends AbstractArrayStorage {
             System.out.printf("Резюме с uuid %s не найдено%n", uuid);
             return;
         }
-        storage[index] = storage[size];
-        storage[size] = null;
+        deleteResume(index);
         size--;
     }
 
@@ -57,28 +71,9 @@ public class ArrayStorage extends AbstractArrayStorage {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
-    protected int getIndex(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return i;
-            }
-        }
-        return -1;
-    }
+    protected abstract int getIndex(String uuid);
+    protected abstract void insertResume(int index, Resume resume);
+    protected abstract void deleteResume(int index);
 
-    @Override
-    protected void insertResume(int index, Resume resume) {
-        storage[size] = resume;
-    }
-
-    @Override
-    protected void deleteResume(int index) {
-        storage[index] = storage[size];
-        storage[size] = null;
-    }
-
-    @Override
-    protected void updateResume(int index, Resume resume) {
-        storage[index] = resume;
-    }
+    protected abstract void updateResume(int index, Resume resume);
 }
