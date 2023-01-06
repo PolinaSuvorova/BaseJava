@@ -1,5 +1,6 @@
 package com.urise.webapp;
 
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.SortedArrayStorage;
 import com.urise.webapp.storage.Storage;
@@ -15,68 +16,70 @@ import java.io.InputStreamReader;
 public class MainArray {
     private final static Storage ARRAY_STORAGE = new SortedArrayStorage();
 
-    public static void main(String[] args) throws IOException {
+    public static void main(String[] args) throws StorageException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         Resume r;
         while (true) {
             System.out.print("Введите одну из команд - (list | size | save uuid | delete uuid | " +
                     "get uuid | clear | exit | update uuid uuidTo): ");
-            String[] params = reader.readLine().trim().toLowerCase().split(" ");
-            if (params.length < 1 || params.length > 3) {
-                System.out.println("Неверная команда.");
-                continue;
-            } else if (!params[0].intern().equals("update") && params.length > 2) {
-                System.out.println("Неверная команда.");
-                continue;
-            }
-
-            String uuid = null;
-            String uuidTo = null;
-
-            if (params.length != 1) {
-                uuid = params[1].intern();
-            }
-            if (params.length == 3) {
-                uuidTo = params[2].intern();
-            }
-            switch (params[0]) {
-                case "list":
-                    printAll();
-                    break;
-                case "size":
-                    System.out.println(ARRAY_STORAGE.size());
-                    break;
-                case "save":
-                    r = new Resume();
-                    r.setUuid(uuid);
-                    ARRAY_STORAGE.save(r);
-                    printAll();
-                    break;
-                case "delete":
-                    ARRAY_STORAGE.delete(uuid);
-                    printAll();
-                    break;
-                case "update":
-                    Resume resumeTo = ARRAY_STORAGE.get(uuidTo);
-                    if (resumeTo == null) {
-                        resumeTo = new Resume();
-                        resumeTo.setUuid(uuidTo);
-                        ARRAY_STORAGE.update(uuid, resumeTo);
-                    }
-                    printAll();
-                    break;
-                case "get":
-                    System.out.println(ARRAY_STORAGE.get(uuid));
-                    break;
-                case "clear":
-                    ARRAY_STORAGE.clear();
-                    printAll();
-                    break;
-                case "exit":
-                    return;
-                default:
+            try {
+                String[] params = reader.readLine().trim().toLowerCase().split(" ");
+                if (params.length < 1 || params.length > 3) {
                     System.out.println("Неверная команда.");
-                    break;
+                    continue;
+                } else if (!params[0].intern().equals("update") && params.length > 2) {
+                    System.out.println("Неверная команда.");
+                    continue;
+                }
+
+                String uuid = null;
+                String uuidTo = null;
+
+                if (params.length != 1) {
+                    uuid = params[1].intern();
+                }
+                if (params.length == 3) {
+                    uuidTo = params[2].intern();
+                }
+                switch (params[0]) {
+                    case "list":
+                        printAll();
+                        break;
+                    case "size":
+                        System.out.println(ARRAY_STORAGE.size());
+                        break;
+                    case "save":
+                        r = new Resume(uuid);
+                        ARRAY_STORAGE.save(r);
+                        printAll();
+                        break;
+                    case "delete":
+                        ARRAY_STORAGE.delete(uuid);
+                        printAll();
+                        break;
+                    case "update":
+                        Resume resumeTo = ARRAY_STORAGE.get(uuidTo);
+                        if (resumeTo == null) {
+                            resumeTo = new Resume(uuidTo);
+                            ARRAY_STORAGE.update(uuid, resumeTo);
+                        }
+                        printAll();
+                        break;
+                    case "get":
+                        System.out.println(ARRAY_STORAGE.get(uuid));
+                        break;
+                    case "clear":
+                        ARRAY_STORAGE.clear();
+                        printAll();
+                        break;
+                    case "exit":
+                        return;
+                    default:
+                        System.out.println("Неверная команда.");
+                        break;
+                }
+             } catch (IOException errIO) {
+                System.out.println(errIO.getMessage());
             }
         }
     }
