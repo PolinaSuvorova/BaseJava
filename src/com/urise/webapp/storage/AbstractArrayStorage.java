@@ -12,7 +12,7 @@ import java.util.Arrays;
  */
 
 public abstract class AbstractArrayStorage implements Storage {
-    static protected final int RESUME_LIMIT = 10000;
+    static protected final int RESUME_LIMIT = 11;
     protected Resume[] storage = new Resume[RESUME_LIMIT];
     protected int size;
 
@@ -51,7 +51,7 @@ public abstract class AbstractArrayStorage implements Storage {
     final public Resume get(String uuid) {
         int index = getIndex(uuid);
         if (index < 0) {
-            return null;
+            throw new NotExistStorageException(uuid);
         } else {
             return storage[index];
         }
