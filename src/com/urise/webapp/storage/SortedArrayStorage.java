@@ -27,8 +27,11 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     @Override
     protected void updateResume(int index, Resume resume) {
         deleteResume(index);
+        storage[size - 1] = null;
+        size--;
         int newIndex = getIndex(resume.getUuid());
         insertResume(newIndex,resume);
+        size++;
     }
 
 }

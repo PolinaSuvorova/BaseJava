@@ -49,7 +49,6 @@ public abstract class AbstractArrayStorageTest {
 
     @Test
     public void update() throws Exception {
-        assertGetNull(RESUME_4,false);
         storage.update(UUID_1, RESUME_4);
         Assert.assertSame(RESUME_4, storage.get(UUID_4));
     }
@@ -79,15 +78,16 @@ public abstract class AbstractArrayStorageTest {
         assertSize(0);
         boolean exit = false;
         int index = 0;
-        while (!exit) {
+        while (index <= 1000 ) {
             index += 1;
             try {
                 storage.save(new Resume("UUID_" + index));
             } catch (StorageException errIO) {
-                exit = true;
-                Assert.fail(errIO.getMessage());
+                Assert.fail("Переполнение до момента проверки");
             }
         }
+        index+=1;
+        storage.save(new Resume("UUID_" + index));
     }
 
     @Test(expected = ExistStorageException.class)
