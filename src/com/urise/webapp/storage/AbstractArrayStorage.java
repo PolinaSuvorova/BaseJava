@@ -12,8 +12,8 @@ import java.util.Arrays;
  */
 
 public abstract class AbstractArrayStorage implements Storage {
-    static protected final int RESUME_LIMIT = 10000;
-    protected Resume[] storage = new Resume[RESUME_LIMIT];
+    static public final int STORAGE_LIMIT = 10000;
+    protected Resume[] storage = new Resume[STORAGE_LIMIT];
     protected int size;
 
    final public int size() {
@@ -34,7 +34,7 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     final public void save(Resume resume) {
-        if (size >= RESUME_LIMIT) {
+        if (size >= STORAGE_LIMIT) {
             throw new StorageException("Хранилище переполненно", resume.getUuid());
         } else {
             String uuid = resume.getUuid();
