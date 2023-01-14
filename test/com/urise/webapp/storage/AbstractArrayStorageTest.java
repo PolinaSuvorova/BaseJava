@@ -14,12 +14,20 @@ public abstract class AbstractArrayStorageTest {
     private static final String UUID_2 = "uuid_2";
     private static final String UUID_3 = "uuid_3";
     private static final String UUID_4 = "uuid_4";
-    private static final String UUID_DUMMY = "uuid_dummy";
-    private static final Resume RESUME_1 = new Resume(UUID_1);
-    private static final Resume RESUME_2 = new Resume(UUID_2);
-    private static final Resume RESUME_3 = new Resume(UUID_3);
-    private static final Resume RESUME_4 = new Resume(UUID_4);
-    private static final Resume RESUME_DUMMY = new Resume(UUID_DUMMY);
+    private static final String UUID_DUMMY = "uuid_DUMMY";
+    private static final Resume RESUME_1;
+    private static final Resume RESUME_2;
+    private static final Resume RESUME_3;
+    private static final Resume RESUME_4;
+    private static final Resume RESUME_DUMMY;
+
+    static {
+        RESUME_1 = new Resume(UUID_1);
+        RESUME_2 = new Resume(UUID_2);
+        RESUME_3 = new Resume(UUID_3);
+        RESUME_4 = new Resume(UUID_4);
+        RESUME_DUMMY = new Resume(UUID_DUMMY);
+    }
 
     @Before
     public void setUp() throws Exception {
@@ -52,12 +60,8 @@ public abstract class AbstractArrayStorageTest {
 
     @Test(expected = StorageException.class)
     public void updateNotExist() throws Exception {
-        try {
-            storage.update(UUID_4, RESUME_DUMMY);
-        } catch (StorageException errIO) {
-            Assert.fail(errIO.getMessage());
-        }
-    }
+         storage.update(UUID_4, RESUME_DUMMY);
+     }
 
     @Test
     public void save() throws Exception {
@@ -112,7 +116,8 @@ public abstract class AbstractArrayStorageTest {
     @Test
     public void getAll() throws Exception {
         Resume[] expected = {RESUME_1, RESUME_2, RESUME_3};
-        Assert.assertArrayEquals(expected, storage.getAll());
+        Resume[] current = storage.getAll();
+        Assert.assertArrayEquals(expected, current);
     }
 
     private void assertSize(int sizeExpected) throws Exception {
