@@ -5,50 +5,60 @@ import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
-    protected abstract void aUpdate(int index, Resume resume);
-
-    protected abstract void aSave(int index, Resume resume);
-
-    protected abstract Resume aGet(int index);
-
-    protected abstract int getIndex(String uuid);
-
-    protected abstract void aDelete(int index);
-
     @Override
     public void update(String uuid, Resume resume) {
-        int index = getIndexByUuid(uuid);
-        aUpdate(index, resume);
+        Object searchKey = getExistingSearchKey(uuid);
+        doUpdate(searchKey, resume);
     }
 
     @Override
     public void save(Resume resume) {
-        String uuid = resume.getUuid();
-        int index = getIndex(uuid);
-        if (index >= 0) {
-            throw new ExistStorageException(uuid);
+        if (getNotExistingSearchKey(resume.getUuid())){
+          doSave(resume);
         }
-        aSave(index, resume);
+
     }
 
     @Override
     public Resume get(String uuid) {
-        int index = getIndexByUuid(uuid);
-        return aGet(index);
+        Object searchKey = getExistingSearchKey(uuid);
+        return doGet(searchKey);
     }
 
     @Override
     public void delete(String uuid) {
-        int index = getIndexByUuid(uuid);
-        aDelete(index);
+        Object searchKey = getExistingSearchKey(uuid);
+        doDelete(searchKey);
     }
 
-    private int getIndexByUuid(String uuid) {
-        int index = getIndex(uuid);
-        if (index < 0) {
+    private Object getExistingSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExistKey(searchKey)) {
             throw new NotExistStorageException(uuid);
         }
-        return index;
+        return searchKey;
     }
 
+    private boolean getNotExistingSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (isExistKey(searchKey)) {
+            throw new ExistStorageException(uuid);
+        }
+        return true;
+    }
+
+    protected boolean isExistKey(Object searchKey) {
+        Integer index = (Integer) searchKey;
+        return index >= 0;
+    }
+
+    protected abstract void doUpdate(Object searchKey, Resume resume);
+
+    protected abstract void doSave( Resume resume);
+
+    protected abstract Resume doGet(Object searchKey);
+
+    protected abstract Integer getSearchKey(String uuid);
+
+    protected abstract void doDelete(Object searchKey);
 }

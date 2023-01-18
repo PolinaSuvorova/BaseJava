@@ -24,37 +24,35 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     }
 
     @Override
-    protected void aUpdate(int index, Resume resume) {
+    protected void doUpdate(Object  searchKey, Resume resume) {
+        Integer index = (Integer) searchKey;
         updateResume(index, resume);
+
     }
 
     @Override
-    protected void aSave(int index, Resume resume) {
+    protected void doSave(Resume resume) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Хранилище переполненно", resume.getUuid());
-        } else {
-            insertResume(index, resume);
-            size++;
         }
+        Integer index = getSearchKey(resume.getUuid());
+        insertResume(index, resume);
+        size++;
     }
 
     @Override
-    protected Resume aGet(int index) {
-        //  int index = getIndex(uuid);
-        //   if (index < 0) {
-        //       throw new NotExistStorageException(uuid);
-        //    } else {
+    protected Resume doGet(Object  searchKey) {
+        Integer index = (Integer) searchKey;
         return storage[index];
-        //    }
     }
 
     @Override
-    protected void aDelete(int index) {
+    protected void doDelete(Object  searchKey) {
+        Integer index = (Integer) searchKey;
         deleteResume(index);
         storage[size - 1] = null;
         size--;
     }
-
 
     /**
      * @return array, contains only Resumes in storage (without null)
@@ -63,7 +61,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         return Arrays.copyOfRange(storage, 0, size);
     }
 
-    protected abstract int getIndex(String uuid);
+    protected abstract Integer getSearchKey(String uuid);
 
     protected abstract void insertResume(int index, Resume resume);
 
