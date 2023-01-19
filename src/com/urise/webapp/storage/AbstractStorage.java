@@ -16,7 +16,6 @@ public abstract class AbstractStorage implements Storage {
         if (getNotExistingSearchKey(resume.getUuid())){
           doSave(resume);
         }
-
     }
 
     @Override
@@ -47,18 +46,15 @@ public abstract class AbstractStorage implements Storage {
         return true;
     }
 
-    protected boolean isExistKey(Object searchKey) {
-        Integer index = (Integer) searchKey;
-        return index >= 0;
-    }
 
+    protected abstract boolean isExistKey(Object searchKey);
     protected abstract void doUpdate(Object searchKey, Resume resume);
 
     protected abstract void doSave( Resume resume);
 
     protected abstract Resume doGet(Object searchKey);
 
-    protected abstract Integer getSearchKey(String uuid);
+    protected abstract Object getSearchKey(String uuid);
 
     protected abstract void doDelete(Object searchKey);
 }

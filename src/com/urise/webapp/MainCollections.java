@@ -36,11 +36,14 @@ public class MainCollections {
         map.put(UUID_1, RESUME_1);
         map.put(UUID_2, RESUME_2);
         map.put(UUID_3, RESUME_3);
+        // неправильно (выбор ключа и поиск по ключу)
         for (String uuid : map.keySet()) {
             System.out.println(map.get(uuid));
         }
+        // правильно (сразу выбор по ключу)
         for (Map.Entry<String, Resume> entry : map.entrySet()) {
             System.out.println(entry.getValue());
         }
+
     }
 }

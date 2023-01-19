@@ -54,6 +54,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size--;
     }
 
+    protected boolean isExistKey(Object searchKey) {
+        Integer index = (Integer) searchKey;
+        return index >= 0;
+    }
     /**
      * @return array, contains only Resumes in storage (without null)
      */

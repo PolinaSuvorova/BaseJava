@@ -14,6 +14,12 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
+    protected boolean isExistKey(Object searchKey) {
+        Integer index = (Integer) searchKey;
+        return index >= 0;
+    }
+
+    @Override
     protected void doUpdate(Object searchKey, Resume resume) {
         list.set((Integer) searchKey, resume);
     }
