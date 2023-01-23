@@ -12,9 +12,11 @@ public class MapStorage extends AbstractStorage {
     @Override
     protected void doUpdate(Object searchKey, Resume resume) {
         Resume resumeOld = (Resume) searchKey;
-        String uuidOld = resumeOld.getUuid();
-        map.remove(uuidOld);
-        map.put(resume.getUuid(),resume);
+        map.put( resumeOld.getUuid( ), resume);
+        //Resume resumeOld = (Resume) searchKey;
+        //String uuidOld = resumeOld.getUuid();
+        //map.remove(uuidOld);
+        //map.put(resume.getUuid(),resume);
         //map.replace(resumeOld.getUuid(),resume);
     }
 
@@ -47,13 +49,7 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     public Resume[] getAll() {
-        Resume[] resumes = new Resume[map.size()];
-        int index = 0;
-        for (Map.Entry<String, Resume> entry : map.entrySet()) {
-            resumes[index] = entry.getValue();
-            index++;
-        }
-        return resumes;
+        return map.values().toArray(new Resume[0]);
     }
 
     @Override
