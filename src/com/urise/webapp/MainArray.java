@@ -20,8 +20,10 @@ public class MainArray {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         Resume r;
         while (true) {
-            System.out.print("Введите одну из команд - (list | size | save uuid | delete uuid | " +
-                    "get uuid | clear | exit | update uuid uuidTo): ");
+            System.out.print("Введите одну из команд - (list | size | save uuid fullName | delete" +
+                    " uuid |" +
+                    " " +
+                    "get uuid | clear | exit | update uuid fullname): ");
             try {
                 String[] params = reader.readLine().trim().toLowerCase().split(" ");
                 if (params.length < 1 || params.length > 3) {
@@ -33,13 +35,13 @@ public class MainArray {
                 }
 
                 String uuid = null;
-                String uuidTo = null;
+                String fullName = null;
 
                 if (params.length != 1) {
                     uuid = params[1].intern();
                 }
                 if (params.length == 3) {
-                    uuidTo = params[2].intern();
+                    fullName = params[2].intern();
                 }
                 switch (params[0]) {
                     case "list":
@@ -49,7 +51,7 @@ public class MainArray {
                         System.out.println(ARRAY_STORAGE.size());
                         break;
                     case "save":
-                        r = new Resume(uuid);
+                        r = new Resume(uuid,fullName);
                         ARRAY_STORAGE.save(r);
                         printAll();
                         break;
@@ -58,10 +60,8 @@ public class MainArray {
                         printAll();
                         break;
                     case "update":
-                        Resume resumeTo = ARRAY_STORAGE.get(uuidTo);
-                        if (resumeTo == null) {
-                            resumeTo = new Resume(uuidTo);
-                            ARRAY_STORAGE.update(uuid, resumeTo);
+                        if (fullName != null) {
+                            ARRAY_STORAGE.update(uuid, fullName);
                         }
                         printAll();
                         break;
@@ -85,7 +85,7 @@ public class MainArray {
     }
 
     static void printAll() {
-        Resume[] all = ARRAY_STORAGE.getAll();
+        Resume[] all = ARRAY_STORAGE.getAllSorted().toArray(new Resume[0]);
         System.out.println("----------------------------");
         if (all.length == 0) {
             System.out.println("Empty");

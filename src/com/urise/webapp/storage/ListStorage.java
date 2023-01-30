@@ -14,6 +14,11 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
+    protected List<Resume> getDataAsList() {
+        return new ArrayList<>(list);
+    }
+
+    @Override
     protected boolean isExistKey(Object searchKey) {
         Integer index = (Integer) searchKey;
         return index >= 0;
@@ -36,19 +41,17 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     protected Integer getSearchKey(String uuid) {
-        Resume resume = new Resume(uuid);
-        return list.indexOf(resume);
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getUuid().equals(uuid)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @Override
     public void doDelete( Object index) {
         list.remove(doGet(index));
-    }
-
-
-    @Override
-    public Resume[] getAll() {
-        return list.toArray( new Resume[0] );
     }
 
     @Override
