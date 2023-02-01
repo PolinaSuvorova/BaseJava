@@ -10,6 +10,7 @@ import java.util.List;
 public abstract class AbstractStorage implements Storage {
     private static final Comparator<Resume> SORT_RESUME =
             Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
+
     @Override
     public void update(String uuid, String fullName) {
         Object searchKey = getExistingSearchKey(uuid);

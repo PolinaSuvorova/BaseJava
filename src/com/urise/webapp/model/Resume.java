@@ -19,12 +19,11 @@ public class Resume implements Comparable<Resume> {
         this(uuid, "Any_Full_Name" + UUID.randomUUID());
     }
 
-    public String getUuid() {
-        return uuid;
-    }
-
     public String getFullName() {
         return fullName;
+    }
+    public String getUuid() {
+        return uuid;
     }
 
     @Override

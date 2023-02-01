@@ -53,7 +53,6 @@ public class MapStorage extends AbstractStorage {
         Resume[] array =  map.values().toArray(new Resume[0]);
         return Arrays.asList(Arrays.copyOfRange(array, 0, array.length));
     }
-
     // @Override
    // public Resume[] getAll() {
    //     return map.values().toArray(new Resume[0]);
