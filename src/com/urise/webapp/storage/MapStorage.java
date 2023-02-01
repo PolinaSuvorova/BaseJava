@@ -13,8 +13,7 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     protected void doUpdate(Object searchKey, Resume resume) {
-        Resume resumeOld = (Resume) searchKey;
-        map.put( resumeOld.getUuid( ), resume);
+         map.put( resume.getUuid( ), resume);
         //Resume resumeOld = (Resume) searchKey;
         //String uuidOld = resumeOld.getUuid();
         //map.remove(uuidOld);
