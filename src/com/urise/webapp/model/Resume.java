@@ -1,5 +1,7 @@
 package com.urise.webapp.model;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -10,11 +12,29 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
     private final String fullName;
 
+    protected List<Contact> contacts = new ArrayList<>();
+    protected List<AbstractSection> sections = new ArrayList<>();
+
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
     }
 
+    public List<Contact> getContacts() {
+        return contacts;
+    }
+
+    public List<AbstractSection> getSections() {
+        return sections;
+    }
+
+    public void addContact(Contact contact ){
+        contacts.add(contact);
+    };
+
+    public void addSection( AbstractSection section ){
+        sections.add(section);
+    };
     public Resume(String uuid) {
         this(uuid, "Any_Full_Name" + UUID.randomUUID());
     }
