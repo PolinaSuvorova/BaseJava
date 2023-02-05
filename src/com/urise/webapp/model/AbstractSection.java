@@ -7,7 +7,6 @@ public abstract class AbstractSection {
     this.nameSection = nameSection;
     }
     public void printSection(){
-        System.out.println("---------------------------------------------");
         System.out.println("-------- " + nameSection);
         doPrintSection( );
         System.out.println("---------------------------------------------");

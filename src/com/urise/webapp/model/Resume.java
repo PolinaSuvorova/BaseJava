@@ -1,6 +1,7 @@
 package com.urise.webapp.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,13 +29,18 @@ public class Resume implements Comparable<Resume> {
         return sections;
     }
 
-    public void addContact(Contact contact ){
+    public void addContact(Contact contact) {
         contacts.add(contact);
-    };
+    }
 
-    public void addSection( AbstractSection section ){
+    ;
+
+    public void addSection(AbstractSection section) {
         sections.add(section);
-    };
+    }
+
+    ;
+
     public Resume(String uuid) {
         this(uuid, "Any_Full_Name" + UUID.randomUUID());
     }
@@ -42,6 +48,7 @@ public class Resume implements Comparable<Resume> {
     public String getFullName() {
         return fullName;
     }
+
     public String getUuid() {
         return uuid;
     }
@@ -59,15 +66,29 @@ public class Resume implements Comparable<Resume> {
         return uuid != null && fullName != null ? uuid.hashCode() + fullName.hashCode() : 0;
     }
 
-   //@Override
-   // public String toString() {
-   //     return fullName + "(uuid=" + uuid + ')';
-  //  }
+    //@Override
+    // public String toString() {
+    //     return fullName + "(uuid=" + uuid + ')';
+    //  }
 
     @Override
     public int compareTo(Resume o) {
         int resCompare = fullName.compareTo(o.fullName);
         return resCompare != 0 ? resCompare : uuid.compareTo(o.uuid);
+    }
+
+    public void print() {
+        System.out.println("Резюме ----" + fullName);
+        Collection<Contact> printContacts = contacts;
+        System.out.println("------Контакты ----");
+        for (Contact contact : printContacts) {
+            System.out.println("-------- " + contact);
+        }
+        System.out.println("---------------------------");
+        Collection<AbstractSection> printSections = sections;
+        for (AbstractSection section : printSections) {
+            section.printSection();
+        }
     }
 }
 

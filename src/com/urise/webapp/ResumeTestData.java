@@ -1,8 +1,6 @@
-package com.urise.webapp.storage;
+package com.urise.webapp;
 
 import com.urise.webapp.model.*;
-
-import java.util.Collection;
 
 public class ResumeTestData {
     public static void main(String[] args) {
@@ -17,7 +15,7 @@ public class ResumeTestData {
         resume.addSection(position);
 
         SectionAsText personal = new SectionAsText("Личные качества");
-        position.addElementSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
+        personal.addElementSection("Аналитический склад ума, сильная логика, креативность, инициативность. Пурист кода и архитектуры.");
         resume.addSection(personal);
 
         SectionAsListText achievement = new SectionAsListText("Достижения");
@@ -99,14 +97,7 @@ public class ResumeTestData {
                         "Инженер (программист Fortran, C)"
                 ));
 
+        resume.print();
 
-        Collection<Contact> contacts = resume.getContacts();
-        for (Contact contact : contacts) {
-            contact.printSection();
-        }
-        Collection<AbstractSection> sections = resume.getSections();
-        for (AbstractSection section : sections) {
-            section.printSection();
-        }
     }
 }

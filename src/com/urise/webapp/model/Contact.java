@@ -14,7 +14,4 @@ public class Contact {
         return typeContact + ": " + text;
     }
 
-    public void printSection(
-
-    );
 }
