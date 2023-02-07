@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SectionAsListText extends AbstractSection{
+public class ListTextSection extends AbstractSection{
     protected List<String> list = new ArrayList<>();
-
-    public SectionAsListText(String nameSection) {
-        super(nameSection);
+    public ListTextSection( ) {
+        super( );
     }
 
     @Override
@@ -18,11 +17,12 @@ public class SectionAsListText extends AbstractSection{
     }
 
     @Override
-    public void doPrintSection() {
+    public String toString() {
+        String text = "";
         Collection<String> collection = list;
-        for (String description : collection) {
-            System.out.println( "* " + description);
+        for (String str : collection) {
+            text = text + "\n" + str;
         }
-
+        return text;
     }
 }

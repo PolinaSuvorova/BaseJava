@@ -1,7 +1,7 @@
 package com.urise.webapp.model;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.List;
 import java.util.UUID;
 
@@ -13,8 +13,8 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
     private final String fullName;
 
-    protected List<Contact> contacts = new ArrayList<>();
-    protected List<AbstractSection> sections = new ArrayList<>();
+    protected EnumMap<TypeContact, Contact> contacts = new EnumMap<>(TypeContact.class);
+    protected EnumMap<TypeSection, AbstractSection> sections = new EnumMap<>(TypeSection.class);
 
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
@@ -22,24 +22,36 @@ public class Resume implements Comparable<Resume> {
     }
 
     public List<Contact> getContacts() {
-        return contacts;
+        Contact[] array = contacts.values().toArray(new Contact[0]);
+        return Arrays.asList(Arrays.copyOfRange(array, 0, array.length));
     }
 
     public List<AbstractSection> getSections() {
-        return sections;
+        AbstractSection[] array = sections.values().toArray(new AbstractSection[0]);
+        return Arrays.asList(Arrays.copyOfRange(array, 0, array.length));
     }
 
-    public void addContact(Contact contact) {
-        contacts.add(contact);
+    public void addContact(TypeContact typeContact, Contact contact) {
+        contacts.put(typeContact, contact);
     }
 
-    ;
-
-    public void addSection(AbstractSection section) {
-        sections.add(section);
+    public void addSection(TypeSection typeSection, AbstractSection section) {
+        sections.put(typeSection, section);
     }
 
-    ;
+    public AbstractSection getSection(TypeSection typeSection) {
+        if (sections.containsKey(typeSection)) {
+            return sections.get(typeSection);
+        }
+        throw new RuntimeException();
+    }
+
+    public Contact getContact(TypeContact typeContact) {
+        if (contacts.containsKey(typeContact)) {
+            return contacts.get(typeContact);
+        }
+        throw new RuntimeException();
+    }
 
     public Resume(String uuid) {
         this(uuid, "Any_Full_Name" + UUID.randomUUID());
@@ -75,20 +87,6 @@ public class Resume implements Comparable<Resume> {
     public int compareTo(Resume o) {
         int resCompare = fullName.compareTo(o.fullName);
         return resCompare != 0 ? resCompare : uuid.compareTo(o.uuid);
-    }
-
-    public void print() {
-        System.out.println("Резюме ----" + fullName);
-        Collection<Contact> printContacts = contacts;
-        System.out.println("------Контакты ----");
-        for (Contact contact : printContacts) {
-            System.out.println("-------- " + contact);
-        }
-        System.out.println("---------------------------");
-        Collection<AbstractSection> printSections = sections;
-        for (AbstractSection section : printSections) {
-            section.printSection();
-        }
     }
 }
 
