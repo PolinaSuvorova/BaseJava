@@ -24,15 +24,12 @@ public class Period {
 
         if (!Objects.equals(startDate, period.startDate))
             return false;
-        if (!Objects.equals(endDate, period.endDate))
-            return false;
         return Objects.equals(title, period.title);
     }
 
     @Override
     public int hashCode() {
         int result = startDate != null ? startDate.hashCode() : 0;
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
         result = 31 * result + (title != null ? title.hashCode() : 0);
         return result;
     }
