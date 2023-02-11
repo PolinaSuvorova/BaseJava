@@ -1,8 +1,7 @@
 package com.urise.webapp.model;
 
-import java.util.Arrays;
 import java.util.EnumMap;
-import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -13,42 +12,32 @@ public class Resume implements Comparable<Resume> {
     private final String uuid;
     private final String fullName;
 
-    protected EnumMap<TypeContact, Contact> contacts = new EnumMap<>(TypeContact.class);
-    protected EnumMap<TypeSection, AbstractSection> sections = new EnumMap<>(TypeSection.class);
+    private final Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
+    private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
 
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;
     }
 
-    public List<Contact> getContacts() {
-        Contact[] array = contacts.values().toArray(new Contact[0]);
-        return Arrays.asList(Arrays.copyOfRange(array, 0, array.length));
+    public void addContact(ContactType contactType, Contact contact) {
+        contacts.put(contactType, contact);
     }
 
-    public List<AbstractSection> getSections() {
-        AbstractSection[] array = sections.values().toArray(new AbstractSection[0]);
-        return Arrays.asList(Arrays.copyOfRange(array, 0, array.length));
+    public void addSection(SectionType sectionType, AbstractSection section) {
+        sections.put(sectionType, section);
     }
 
-    public void addContact(TypeContact typeContact, Contact contact) {
-        contacts.put(typeContact, contact);
-    }
-
-    public void addSection(TypeSection typeSection, AbstractSection section) {
-        sections.put(typeSection, section);
-    }
-
-    public AbstractSection getSection(TypeSection typeSection) {
-        if (sections.containsKey(typeSection)) {
-            return sections.get(typeSection);
+    public AbstractSection getSection(SectionType sectionType) {
+        if (sections.containsKey(sectionType)) {
+            return sections.get(sectionType);
         }
         throw new RuntimeException();
     }
 
-    public Contact getContact(TypeContact typeContact) {
-        if (contacts.containsKey(typeContact)) {
-            return contacts.get(typeContact);
+    public Contact getContact(ContactType contactType) {
+        if (contacts.containsKey(contactType)) {
+            return contacts.get(contactType);
         }
         throw new RuntimeException();
     }

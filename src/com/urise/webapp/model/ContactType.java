@@ -1,14 +1,14 @@
 package com.urise.webapp.model;
 
-public enum TypeContact {
+public enum ContactType {
     SKYPE("Skype"),
     EMAIL("E-mail"),
     PHONE("Тел."),
     LINKEDIN("linked In"),
     GITHUB("GitHub");
-    private String title;
+    private final String title;
 
-    TypeContact(String title) {
+    ContactType(String title) {
         this.title = title;
     }
     public String getTitle() {

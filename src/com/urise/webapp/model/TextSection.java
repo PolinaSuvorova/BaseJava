@@ -1,14 +1,27 @@
 package com.urise.webapp.model;
 
+import java.util.Objects;
+
 public class TextSection extends AbstractSection{
-    protected String description;
-    public TextSection( ) {
-        super( );
+    private final String description;
+
+    public TextSection(String description){
+        this.description = description;
     }
 
     @Override
-    public void addElementSection(Object element) {
-        description = (String)  element;
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        TextSection that = (TextSection) o;
+
+        return Objects.equals(description, that.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return description != null ? description.hashCode() : 0;
     }
 
     @Override

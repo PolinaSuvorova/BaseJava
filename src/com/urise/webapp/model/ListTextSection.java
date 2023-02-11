@@ -5,24 +5,24 @@ import java.util.Collection;
 import java.util.List;
 
 public class ListTextSection extends AbstractSection{
-    protected List<String> list = new ArrayList<>();
-    public ListTextSection( ) {
-        super( );
+    private List<String> list = new ArrayList<>();
+
+    public ListTextSection(List<String> list) {
+        this.list = list;
     }
 
-    @Override
-    public void addElementSection(Object element) {
-        String description = (String) element;
-        list.add(description);
+    public List<String> getList() {
+        return list;
     }
 
     @Override
     public String toString() {
-        String text = "";
+        StringBuilder text = new StringBuilder();
         Collection<String> collection = list;
         for (String str : collection) {
-            text = text + "\n" + str;
+            text.append("\n");
+            text.append(str);
         }
-        return text;
+        return text.toString();
     }
 }
