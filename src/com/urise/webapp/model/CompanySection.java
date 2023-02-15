@@ -4,12 +4,26 @@ import java.util.Collection;
 import java.util.List;
 
 public class CompanySection extends AbstractSection {
-    private List<Company> list;
+    private List<Company> companies;
 
-    public CompanySection( List<Company> list ) {
-       this.list = list;
+    public CompanySection( List<Company> companies) {
+       this.companies = companies;
     }
 
+    public List<Company> getCompanies() {
+        return companies;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+        Collection<Company> collection = companies;
+        for (Company company : collection) {
+            str.append("\n");
+            str.append(company);
+        }
+        return str.toString();
+    }
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -17,22 +31,11 @@ public class CompanySection extends AbstractSection {
 
         CompanySection that = (CompanySection) o;
 
-        return list != null ? list.equals(that.list) : that.list == null;
+        return companies != null ? companies.equals(that.companies) : that.companies == null;
     }
 
     @Override
     public int hashCode() {
-        return list != null ? list.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder str = new StringBuilder();
-        Collection<Company> collection = list;
-        for (Company company : collection) {
-            str.append("\n");
-            str.append(company);
-        }
-        return str.toString();
+        return companies != null ? companies.hashCode() : 0;
     }
 }
