@@ -1,12 +1,14 @@
 package com.urise.webapp.model;
 
+import java.time.LocalDate;
+
 public class Period {
-    private final String startDate;
-    private final String endDate;
+    private final LocalDate startDate;
+    private final LocalDate endDate;
     private final String title;
     private final String description;
 
-    public Period(String startDate, String endDate, String title, String description) {
+    public Period(LocalDate startDate, LocalDate endDate, String title, String description) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.title = title;
