@@ -4,10 +4,10 @@ import java.util.Collection;
 import java.util.List;
 
 public class CompanySection extends AbstractSection {
-    private List<Company> companies;
+    private final List<Company> companies;
 
-    public CompanySection( List<Company> companies) {
-       this.companies = companies;
+    public CompanySection(List<Company> companies) {
+        this.companies = companies;
     }
 
     public List<Company> getCompanies() {
@@ -24,6 +24,7 @@ public class CompanySection extends AbstractSection {
         }
         return str.toString();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

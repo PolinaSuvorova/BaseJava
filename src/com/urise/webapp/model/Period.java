@@ -16,9 +16,9 @@ public class Period {
     }
 
     public String toString() {
-     return "*** " + startDate + "-" + endDate + " *** " +
-             title + '\'' +
-            "description='" + description + '\'';
+        return "*** " + startDate + "-" + endDate + " *** " +
+                title + '\'' +
+                "description='" + description + '\'';
     }
 
 }

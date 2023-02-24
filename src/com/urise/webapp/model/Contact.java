@@ -5,8 +5,8 @@ import java.util.Objects;
 public class Contact {
     private final String text;
 
-   public Contact( String text){
-          this.text = text;
+    public Contact(String text) {
+        this.text = text;
     }
 
     public String getText() {

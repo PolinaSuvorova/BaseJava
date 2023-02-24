@@ -15,9 +15,10 @@ public class Company {
         this.name = name;
         this.website = website;
     }
+
     public Company(String website, String name) {
-          this.name = name;
-          this.website = website;
+        this.name = name;
+        this.website = website;
 
     }
 
@@ -49,9 +50,10 @@ public class Company {
         for (Period period : collection) {
             text.append("\n");
             text.append(period);
-         }
+        }
         return text.toString();
     }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

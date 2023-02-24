@@ -47,7 +47,7 @@ public class ResumeTestData {
 
         List<Company> experience = new ArrayList<>();
 
-        Company company = new Company(
+        experience.add( new Company(
                 Arrays.asList(
                         new Period(
                                 DateUtil.of(2013, Month.OCTOBER),
@@ -56,9 +56,7 @@ public class ResumeTestData {
                                 "Создание, организация и проведение Java онлайн проектов " +
                                         "и стажировок.")),
                 "Java Online Projects",
-                "www.сайт.ru");
-
-        experience.add(company);
+                "www.сайт.ru"));
 
         experience.add(
                 new Company(Arrays.asList(

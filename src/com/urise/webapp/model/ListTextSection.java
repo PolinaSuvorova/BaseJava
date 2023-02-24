@@ -1,12 +1,11 @@
 package com.urise.webapp.model;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 
-public class ListTextSection extends AbstractSection{
-    private List<String> textSections = new ArrayList<>();
+public class ListTextSection extends AbstractSection {
+    private List<String> textSections;
 
     public ListTextSection(List<String> textSections) {
         this.textSections = textSections;
