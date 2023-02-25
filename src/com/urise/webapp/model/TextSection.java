@@ -3,6 +3,9 @@ package com.urise.webapp.model;
 import java.util.Objects;
 
 public class TextSection extends AbstractSection {
+    //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
+    // При изменении класса самостоятельно ставим новую версию
+    private static final long serialVersionID = 1L;
     private final String description;
 
     public TextSection(String description) {

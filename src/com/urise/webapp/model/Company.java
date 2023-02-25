@@ -1,11 +1,14 @@
 package com.urise.webapp.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class Company {
-
+public class Company implements Serializable {
+    //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
+    // При изменении класса самостоятельно ставим новую версию
+    private static final long serialVersionID = 1L;
     private final String name;
     private final String website;
     private List<Period> periods = new ArrayList<>();

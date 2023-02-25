@@ -29,7 +29,7 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected void doSave( Resume resume) {
+    protected void doSave( Resume resume,Integer searchKey) {
         list.add(resume);
     }
 

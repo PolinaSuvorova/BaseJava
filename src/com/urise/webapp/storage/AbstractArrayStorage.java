@@ -35,12 +35,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     }
 
     @Override
-    protected void doSave(Resume resume) {
+    protected void doSave(Resume resume,Integer searchKey) {
         if (size >= STORAGE_LIMIT) {
             throw new StorageException("Хранилище переполненно", resume.getUuid());
         }
-        Integer index = getSearchKey(resume.getUuid());
-        insertResume(index, resume);
+        //Integer index = getSearchKey(resume.getUuid());
+        insertResume(searchKey, resume);
         size++;
     }
 

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage<Object> {
-
     protected Map<String, Resume> map = new HashMap<>();
 
     @Override
@@ -17,7 +16,7 @@ public class MapStorage extends AbstractStorage<Object> {
     }
 
     @Override
-    protected void doSave(Resume resume) {
+    protected void doSave(Resume resume, Object searchKey) {
         String uuid = resume.getUuid();
         map.put( uuid, resume);
     }

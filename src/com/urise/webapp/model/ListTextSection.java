@@ -5,6 +5,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class ListTextSection extends AbstractSection {
+    //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
+    // При изменении класса самостоятельно ставим новую версию
+    private static final long serialVersionID = 1L;
     private List<String> textSections;
 
     public ListTextSection(List<String> textSections) {

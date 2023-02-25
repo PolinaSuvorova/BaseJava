@@ -9,6 +9,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -17,6 +18,7 @@ import java.util.List;
 
 public abstract class AbstractStorageTest {
     final protected Storage storage;
+    protected static final File STORAGE_DIR = new File("C:\\Users\\ptatara\\Desktop\\TestDirectory");
     private static final String UUID_1 = "uuid_1";
     private static final String UUID_2 = "uuid_2";
     private static final String UUID_3 = "uuid_3";

@@ -13,10 +13,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     protected AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
-        if (directory.isDirectory()) {
+        if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
         }
-        if (directory.canRead() || directory.canWrite()) {
+        if (!directory.canRead() || !directory.canWrite()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not " +
                     "readable/writable");
         }
@@ -25,10 +25,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public void clear() {
-            File[] files = getCheckedListFiles();
-            for (File file : files) {
-                doDelete(file);
-            }
+        File[] files = getCheckedListFiles();
+        for (File file : files) {
+            doDelete(file);
+        }
     }
 
     @Override
@@ -62,18 +62,18 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(File searchKey, Resume resume) {
         try {
-            doWrite(resume, searchKey);
+            doWrite(resume, new BufferedOutputStream(new FileOutputStream(searchKey)));
         } catch (IOException e) {
             throw new StorageException("I/O error", directory.getName(), e);
         }
     }
 
     @Override
-    protected void doSave(Resume resume) {
+    protected void doSave(Resume resume, File file) {
         try {
-           if ( directory.createNewFile() ) {
-               doWrite(resume, directory);
-           }
+            file.createNewFile();
+            doUpdate(file, resume);
+
         } catch (IOException e) {
             throw new StorageException("I/O error", directory.getName(), e);
         }
@@ -82,7 +82,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File searchKey) {
         try {
-            return doRead(searchKey);
+            return doRead(new BufferedInputStream(new FileInputStream(searchKey)));
         } catch (IOException e) {
             throw new StorageException("I/O error", searchKey.getName(), e);
         }
@@ -90,7 +90,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected File getSearchKey(String uuid) {
-        return new File(directory, uuid);
+        return new File(directory, uuid + ".txt");
     }
 
     @Override
@@ -103,12 +103,12 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     private File[] getCheckedListFiles() throws StorageException {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("I/O Error",directory.getAbsolutePath());
+            throw new StorageException("I/O Error", directory.getAbsolutePath());
         }
         return files;
     }
 
-    protected abstract void doWrite(Resume r, File file) throws IOException;
+    protected abstract void doWrite(Resume resume, OutputStream outputStream) throws IOException;
 
-    protected abstract Resume doRead(File file) throws IOException;
+    protected abstract Resume doRead(InputStream inputStream) throws IOException;
 }

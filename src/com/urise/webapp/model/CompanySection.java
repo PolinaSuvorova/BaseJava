@@ -4,6 +4,9 @@ import java.util.Collection;
 import java.util.List;
 
 public class CompanySection extends AbstractSection {
+    //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
+    // При изменении класса самостоятельно ставим новую версию
+    private static final long serialVersionID = 1L;
     private final List<Company> companies;
 
     public CompanySection(List<Company> companies) {
