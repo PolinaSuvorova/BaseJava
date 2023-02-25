@@ -11,27 +11,6 @@ import java.util.Objects;
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
     private final File directory;
 
-    @Override
-    public void clear() {
-        try {
-            File[] files = getCheckedListFiles();
-            for (File file : files) {
-                doDelete(file);
-            }
-        } catch (IOException e) {
-            throw new StorageException("I/O error", directory.getName(), e);
-        }
-    }
-
-    @Override
-    public int size() {
-        String[] list = directory.list();
-        if (list == null) {
-            throw new StorageException("IO error", null);
-        }
-        return list.length;
-    }
-
     protected AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (directory.isDirectory()) {
@@ -45,6 +24,23 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
+    public void clear() {
+            File[] files = getCheckedListFiles();
+            for (File file : files) {
+                doDelete(file);
+            }
+    }
+
+    @Override
+    public int size() {
+        String[] list = directory.list();
+        if (list == null) {
+            throw new StorageException("IO error", null);
+        }
+        return list.length;
+    }
+
+    @Override
     protected List<Resume> getDataAsList() {
         List<Resume> list = new ArrayList<>();
         try {
@@ -52,7 +48,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
             for (File file : files) {
                 list.add(doGet(file));
             }
-        } catch (IOException e) {
+        } catch (StorageException e) {
             return null;
         }
         return list;
@@ -104,10 +100,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         }
     }
 
-    private File[] getCheckedListFiles() throws IOException {
+    private File[] getCheckedListFiles() throws StorageException {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new IOException("Файлов не найдено");
+            throw new StorageException("I/O Error",directory.getAbsolutePath());
         }
         return files;
     }
