@@ -10,8 +10,9 @@ import java.util.Objects;
 
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
     private final File directory;
+    private final AbstractObjectStreamStorage objStreamStorage;
 
-    protected AbstractFileStorage(File directory) {
+    protected AbstractFileStorage(File directory, AbstractObjectStreamStorage objStreamStorage) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -21,6 +22,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
                     "readable/writable");
         }
         this.directory = directory;
+        this.objStreamStorage = objStreamStorage;
     }
 
     @Override
@@ -62,7 +64,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected void doUpdate(File searchKey, Resume resume) {
         try {
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(searchKey)));
+            objStreamStorage.doWrite(resume,
+                    new BufferedOutputStream(new FileOutputStream(searchKey)));
         } catch (IOException e) {
             throw new StorageException("I/O error", directory.getName(), e);
         }
@@ -82,7 +85,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected Resume doGet(File searchKey) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(searchKey)));
+            return objStreamStorage.doRead(
+                    new BufferedInputStream(new FileInputStream(searchKey)));
         } catch (IOException e) {
             throw new StorageException("I/O error", searchKey.getName(), e);
         }
@@ -108,7 +112,4 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         return files;
     }
 
-    protected abstract void doWrite(Resume resume, OutputStream outputStream) throws IOException;
-
-    protected abstract Resume doRead(InputStream inputStream) throws IOException;
 }

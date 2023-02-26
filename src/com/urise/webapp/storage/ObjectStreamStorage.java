@@ -5,15 +5,10 @@ import com.urise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage extends AbstractFileStorage{
-
-    protected ObjectStreamStorage(File directory) {
-        super(directory);
-    }
-
+public class ObjectStreamStorage extends AbstractObjectStreamStorage{
     @Override
     protected void doWrite(Resume resume, OutputStream outputStream) throws IOException {
-       // Оборачиваем в try чтобы все открытые буферизированные данные были закрыты автоматически
+        // Оборачиваем в try чтобы все открытые буферизированные данные были закрыты автоматически
         // при выходе из try (см. интерфейс у родителей AutoCloseable)
         try(ObjectOutputStream oos = new ObjectOutputStream( outputStream )) {
             oos.writeObject(resume);
