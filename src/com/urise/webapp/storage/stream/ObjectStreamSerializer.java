@@ -1,13 +1,13 @@
-package com.urise.webapp.storage;
+package com.urise.webapp.storage.stream;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage extends AbstractObjectStreamStorage{
+public class ObjectStreamSerializer implements SerializerStrategy {
     @Override
-    protected void doWrite(Resume resume, OutputStream outputStream) throws IOException {
+    public void doWrite(Resume resume, OutputStream outputStream) throws IOException {
         // Оборачиваем в try чтобы все открытые буферизированные данные были закрыты автоматически
         // при выходе из try (см. интерфейс у родителей AutoCloseable)
         try(ObjectOutputStream oos = new ObjectOutputStream( outputStream )) {
@@ -16,7 +16,7 @@ public class ObjectStreamStorage extends AbstractObjectStreamStorage{
     }
 
     @Override
-    protected Resume doRead(InputStream inputStream) throws IOException {
+    public Resume doRead(InputStream inputStream) throws IOException {
         try(ObjectInputStream ois = new ObjectInputStream( inputStream )) {
             return (Resume) ois.readObject();
         } catch (ClassNotFoundException e) {

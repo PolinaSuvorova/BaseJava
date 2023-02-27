@@ -1,18 +1,19 @@
-package com.urise.webapp.storage;
+package com.urise.webapp.storage.stream;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.AbstractStorage;
 
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> {
+public class FileStorage extends AbstractStorage<File> {
     private final File directory;
-    private final AbstractObjectStreamStorage objStreamStorage;
+    private final SerializerStrategy objStreamStorage;
 
-    protected AbstractFileStorage(File directory, AbstractObjectStreamStorage objStreamStorage) {
+    public FileStorage(File directory, SerializerStrategy objStreamStorage) {
         Objects.requireNonNull(directory, "directory must not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + " is not directory");
@@ -35,11 +36,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        String[] list = directory.list();
-        if (list == null) {
-            throw new StorageException("IO error", null);
-        }
-        return list.length;
+        File[] listFiles = getCheckedListFiles( );
+        return listFiles.length;
     }
 
     @Override
@@ -75,11 +73,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     protected void doSave(Resume resume, File file) {
         try {
             file.createNewFile();
-            doUpdate(file, resume);
-
         } catch (IOException e) {
             throw new StorageException("I/O error", directory.getName(), e);
         }
+        doUpdate(file, resume);
     }
 
     @Override
@@ -94,7 +91,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected File getSearchKey(String uuid) {
-        return new File(directory, uuid + ".txt");
+        return new File(directory, uuid );
     }
 
     @Override
@@ -104,10 +101,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         }
     }
 
-    private File[] getCheckedListFiles() throws StorageException {
+    private File[] getCheckedListFiles() {
         File[] files = directory.listFiles();
         if (files == null) {
-            throw new StorageException("I/O Error", directory.getAbsolutePath());
+            throw new StorageException("Рathname does not denote a directory, or if an I/O error", directory.getAbsolutePath());
         }
         return files;
     }

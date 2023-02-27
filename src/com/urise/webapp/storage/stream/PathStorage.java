@@ -1,22 +1,25 @@
-package com.urise.webapp.storage;
+package com.urise.webapp.storage.stream;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.AbstractStorage;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Stream;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private final Path directory;
-    private final AbstractObjectStreamStorage objStreamStorage;
-    private int countFiles;
+    private final SerializerStrategy objStreamStorage;
 
-    protected AbstractPathStorage(String path, AbstractObjectStreamStorage objStreamStorage) {
+    public PathStorage(String path, SerializerStrategy objStreamStorage) {
 
         Objects.requireNonNull(path, "directory must not be null");
         directory = Paths.get(path);
@@ -34,47 +37,24 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
 
     @Override
     public void clear() {
-        try {
-            Files.list(directory).forEach(this::doDelete);
-
-        } catch (IOException e) {
-            throw new StorageException("Path delete error", null, e);
-        }
+        getFilesList().forEach(this::doDelete);
     }
 
     @Override
     public int size() {
-        countFiles = 0;
-        try {
-            Files.list(directory).forEach(path -> countForEach());
-        } catch (IOException e) {
-            throw new StorageException("IO error", null, e);
-        }
-        return countFiles;
+        return (int) getFilesList().count();
     }
-
-    private void countForEach() {
-        countFiles++;
-    }
-
-    ;
 
     @Override
     protected List<Resume> getDataAsList() {
         List<Resume> list = new ArrayList<>();
-
-        try {
-            Files.list(directory).forEach(path -> list.add(doGet(path)));
-        } catch (IOException e) {
-            throw new StorageException("I/O error", null, e);
-        }
-
+        getFilesList().forEach(path -> list.add(doGet(path)));
         return list;
     }
 
     @Override
     protected boolean isExistKey(Path searchKey) {
-        return Files.exists(directory);
+        return Files.exists(searchKey);
     }
 
     @Override
@@ -83,18 +63,20 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
             objStreamStorage.doWrite(resume,
                     new BufferedOutputStream(Files.newOutputStream(searchKey)));
         } catch (IOException e) {
-            throw new StorageException("I/O error", null, e);
+            throw new StorageException("Error update file", searchKey.getFileName().toString(), e);
         }
     }
 
     @Override
-    protected void doSave(Resume resume, Path path) {
+    protected void doSave(Resume resume, Path path) throws StorageException {
+        Path file;
         try {
-            doUpdate(Files.createFile(path), resume);
-
+            file = Files.createFile(path);
         } catch (IOException e) {
-            throw new StorageException("I/O error", null, e);
+            throw new StorageException("Error create File " + resume.getUuid(),
+                    path.getFileName().toString(), e);
         }
+        doUpdate(file, resume);
     }
 
     @Override
@@ -102,13 +84,21 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         try {
             return objStreamStorage.doRead(new BufferedInputStream(Files.newInputStream(searchKey)));
         } catch (IOException e) {
-            throw new StorageException("I/O error", null, e);
+            throw new StorageException("Error read file", searchKey.getFileName().toString(), e);
         }
     }
 
     @Override
     protected Path getSearchKey(String uuid) {
-        return Paths.get(directory.toString() + "\\" + uuid + ".txt");
+        return directory.resolve(uuid);
+    }
+
+    private Stream<Path> getFilesList() {
+        try {
+            return Files.list(directory);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
@@ -116,7 +106,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         try {
             Files.deleteIfExists(searchKey);
         } catch (IOException e) {
-            throw new StorageException("I/O error", null, e);
+            throw new StorageException("Error delete File", searchKey.getFileName().toString(), e);
         }
     }
 }
