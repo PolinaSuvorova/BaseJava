@@ -7,7 +7,10 @@ public class CompanySection extends AbstractSection {
     //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
-    private final List<Company> companies;
+    private List<Company> companies;
+
+    public CompanySection() {
+    }
 
     public CompanySection(List<Company> companies) {
         this.companies = companies;

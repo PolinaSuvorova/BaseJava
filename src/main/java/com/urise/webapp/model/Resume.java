@@ -16,12 +16,13 @@ public class Resume implements Comparable<Resume>, Serializable {
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
     // Unique identifier
-    private final String uuid;
-    private final String fullName;
+    private String uuid;
+    private String fullName;
 
     private final Map<ContactType, Contact> contacts = new EnumMap<>(ContactType.class);
     private final Map<SectionType, AbstractSection> sections = new EnumMap<>(SectionType.class);
-
+    public Resume() {
+    }
     public Resume(String uuid, String fullName) {
         this.uuid = uuid;
         this.fullName = fullName;

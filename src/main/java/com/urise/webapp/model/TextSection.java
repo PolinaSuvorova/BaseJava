@@ -6,8 +6,9 @@ public class TextSection extends AbstractSection {
     //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
-    private final String description;
-
+    private String description;
+    public TextSection() {
+    }
     public TextSection(String description) {
         this.description = description;
     }

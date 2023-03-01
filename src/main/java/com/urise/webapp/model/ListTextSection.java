@@ -10,6 +10,9 @@ public class ListTextSection extends AbstractSection {
     private static final long serialVersionID = 1L;
     private List<String> textSections;
 
+    public ListTextSection() {
+    }
+
     public ListTextSection(List<String> textSections) {
         this.textSections = textSections;
     }

@@ -9,8 +9,9 @@ public class Contact implements Serializable {
     //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
-    private final String text;
-
+    private String text;
+    public Contact() {
+    }
     public Contact(String text) {
         this.text = text;
     }

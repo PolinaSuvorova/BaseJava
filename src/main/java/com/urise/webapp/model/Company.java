@@ -11,10 +11,10 @@ public class Company implements Serializable {
     //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
-    private final String name;
-    private final String website;
+    private  String name;
+    private  String website;
     private List<Period> periods = new ArrayList<>();
-
+    public Company( ){}
     public Company(List<Period> periods, String name, String website) {
         this.periods = periods;
         this.name = name;
