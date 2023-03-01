@@ -43,13 +43,9 @@ public class FileStorage extends AbstractStorage<File> {
     @Override
     protected List<Resume> getDataAsList() {
         List<Resume> list = new ArrayList<>();
-        try {
-            File[] files = getCheckedListFiles();
-            for (File file : files) {
-                list.add(doGet(file));
-            }
-        } catch (StorageException e) {
-            return null;
+        File[] files = getCheckedListFiles();
+        for (File file : files) {
+            list.add(doGet(file));
         }
         return list;
     }
@@ -74,7 +70,7 @@ public class FileStorage extends AbstractStorage<File> {
         try {
             file.createNewFile();
         } catch (IOException e) {
-            throw new StorageException("I/O error", directory.getName(), e);
+            throw new StorageException("I/O error", file.getAbsolutePath(), e);
         }
         doUpdate(file, resume);
     }
