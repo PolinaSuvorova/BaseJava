@@ -36,7 +36,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     public int size() {
-        File[] listFiles = getCheckedListFiles( );
+        File[] listFiles = getCheckedListFiles();
         return listFiles.length;
     }
 
@@ -91,7 +91,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     protected File getSearchKey(String uuid) {
-        return new File(directory, uuid );
+        return new File(directory, uuid);
     }
 
     @Override
