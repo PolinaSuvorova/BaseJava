@@ -31,6 +31,4 @@ public class ArrayStorage extends AbstractArrayStorage {
     protected void updateResume(int index, Resume resume) {
         storage[index] = resume;
     }
-
-
-}
+    }

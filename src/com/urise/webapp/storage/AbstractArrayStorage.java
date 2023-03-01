@@ -70,4 +70,5 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> {
     protected abstract void deleteResume(int index);
 
     protected abstract void updateResume(int index, Resume resume);
+
 }
