@@ -1,7 +1,7 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
-import com.urise.webapp.exception.model.Resume;
+import com.urise.webapp.model.Resume;
 
 import java.util.Arrays;
 import java.util.List;

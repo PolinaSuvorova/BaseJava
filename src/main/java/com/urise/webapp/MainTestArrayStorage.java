@@ -1,6 +1,6 @@
 package com.urise.webapp;
 
-import com.urise.webapp.exception.model.Resume;
+import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.MapStorage;
 import com.urise.webapp.storage.Storage;
 

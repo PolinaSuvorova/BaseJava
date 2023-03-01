@@ -1,7 +1,7 @@
 package com.urise.webapp;
 
 import com.urise.webapp.exception.StorageException;
-import com.urise.webapp.exception.model.Resume;
+import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.SortedArrayStorage;
 import com.urise.webapp.storage.Storage;
 

@@ -1,14 +1,21 @@
-package com.urise.webapp.exception.model;
+package com.urise.webapp.model;
 
+import com.urise.webapp.util.LocalDateAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
-
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Period implements Serializable {
     //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private final LocalDate startDate;
+    @XmlJavaTypeAdapter(LocalDateAdapter.class)
     private final LocalDate endDate;
     private final String title;
     private final String description;

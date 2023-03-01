@@ -1,4 +1,4 @@
-package com.urise.webapp.exception.model;
+package com.urise.webapp.model;
 
 public enum ContactType {
     SKYPE("Skype"),

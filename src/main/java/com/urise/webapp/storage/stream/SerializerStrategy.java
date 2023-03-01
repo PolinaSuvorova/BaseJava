@@ -1,6 +1,6 @@
 package com.urise.webapp.storage.stream;
 
-import com.urise.webapp.exception.model.Resume;
+import com.urise.webapp.model.Resume;
 
 import java.io.IOException;
 import java.io.InputStream;

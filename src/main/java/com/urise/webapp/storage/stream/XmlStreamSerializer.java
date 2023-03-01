@@ -1,6 +1,7 @@
 package com.urise.webapp.storage.stream;
 
 import com.urise.webapp.exception.model.*;
+import com.urise.webapp.model.*;
 import com.urise.webapp.util.XmlParser;
 
 import java.io.*;
