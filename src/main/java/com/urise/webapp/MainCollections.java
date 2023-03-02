@@ -8,15 +8,15 @@ public class MainCollections {
     private static final String UUID_1 = "uuid_1";
     private static final String UUID_2 = "uuid_2";
     private static final String UUID_3 = "uuid_3";
-    private static final Resume RESUME_1 = new Resume(UUID_1,"fullname1");
-    private static final Resume RESUME_2 = new Resume(UUID_2,"fullname2");
-    private static final Resume RESUME_3 = new Resume(UUID_3,"fullname3");
+    private static final Resume RESUME_1 = new Resume(UUID_1, "fullname1");
+    private static final Resume RESUME_2 = new Resume(UUID_2, "fullname2");
+    private static final Resume RESUME_3 = new Resume(UUID_3, "fullname3");
 
     public static void main(String[] args) {
         Collection<Resume> collection = new ArrayList<>();
         collection.add(RESUME_1);
         collection.add(RESUME_2);
-        collection.add(RESUME_3 );
+        collection.add(RESUME_3);
 
         for (Resume r : collection) {
             System.out.println(r);

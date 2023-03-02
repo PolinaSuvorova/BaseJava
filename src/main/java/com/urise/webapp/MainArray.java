@@ -51,7 +51,7 @@ public class MainArray {
                         System.out.println(ARRAY_STORAGE.size());
                         break;
                     case "save":
-                        r = new Resume(uuid,fullName);
+                        r = new Resume(uuid, fullName);
                         ARRAY_STORAGE.save(r);
                         printAll();
                         break;
@@ -78,7 +78,7 @@ public class MainArray {
                         System.out.println("Неверная команда.");
                         break;
                 }
-             } catch (IOException errIO) {
+            } catch (IOException errIO) {
                 System.out.println(errIO.getMessage());
             }
         }

@@ -47,7 +47,7 @@ public class ResumeTestData {
 
         List<Company> experience = new ArrayList<>();
 
-        experience.add( new Company(
+        experience.add(new Company(
                 Arrays.asList(
                         new Period(
                                 DateUtil.of(2013, Month.OCTOBER),
@@ -82,7 +82,7 @@ public class ResumeTestData {
                                         "(Jenkins)")),
                         "RIT Center",
                         "www.сайт.ru"));
-        resume.addSection(SectionType.EXPETIENCE, new CompanySection(experience));
+        resume.addSection(SectionType.EXPERIENCE, new CompanySection(experience));
 
         List<Company> education = new ArrayList<>();
         education.add(

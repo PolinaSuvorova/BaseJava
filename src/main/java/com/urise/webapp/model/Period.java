@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Period implements Serializable {
     //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
@@ -17,12 +18,15 @@ public class Period implements Serializable {
     //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
     //@JsonDeserialize(using = LocalDateDeserializer.class)
     //@JsonSerialize(using = LocalDateSerializer.class)
-    private  LocalDate startDate;
+    private LocalDate startDate;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private  LocalDate endDate;
-    private  String title;
-    private  String description;
-    public Period() {}
+    private LocalDate endDate;
+    private String title;
+    private String description;
+
+    public Period() {
+    }
+
     public Period(LocalDate startDate, LocalDate endDate, String title, String description) {
         Objects.requireNonNull(startDate, "startDate must not be null");
         Objects.requireNonNull(title, "title must not be null");
@@ -30,6 +34,22 @@ public class Period implements Serializable {
         this.endDate = endDate;
         this.title = title;
         this.description = description;
+    }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
+
+    public LocalDate getEndDate() {
+        return endDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public String toString() {

@@ -67,6 +67,7 @@ public abstract class AbstractStorage<SK> implements Storage {
     protected abstract void doUpdate(SK searchKey, Resume resume);
 
     protected abstract void doSave(Resume resume, SK searchKey) throws StorageException;
+
     protected abstract Resume doGet(SK searchKey);
 
     protected abstract SK getSearchKey(String uuid);

@@ -169,7 +169,7 @@ public abstract class AbstractStorageTest {
                                 "Создание, организация и проведение Java онлайн проектов и стажировок.")),
                 "Java Online Projects", "www.сайт.ru"));
         experience.add(new Company(
-                Arrays.asList(new Period(DateUtil.of(2014,Month.OCTOBER), DateUtil.of(2016, Month.JANUARY),
+                Arrays.asList(new Period(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY),
                         "Старший разработчик (backend)",
                         "Проектирование и разработка онлайн платформы управления проектами Wrike " +
                                 "(Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, " +
@@ -186,7 +186,7 @@ public abstract class AbstractStorageTest {
                                         "(Jenkins)")),
                 "RIT Center",
                 "www.сайт.ru"));
-        resume.addSection(SectionType.EXPETIENCE, new CompanySection(experience));
+        resume.addSection(SectionType.EXPERIENCE, new CompanySection(experience));
         //Образование
         List<Company> education = new ArrayList<>();
         education.add(new Company(
@@ -211,8 +211,8 @@ public abstract class AbstractStorageTest {
                 "www.сайт.ru"));
         education.add(new Company(
                 Arrays.asList(new Period(DateUtil.of(1993, Month.SEPTEMBER), DateUtil.of(1996, Month.JULY),
-                        "Санкт-Петербургский национальный исследовательский университет",
-                        "Аспирантура (программист С, С++)"),
+                                "Санкт-Петербургский национальный исследовательский университет",
+                                "Аспирантура (программист С, С++)"),
                         new Period(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY),
                                 "Санкт-Петербургский национальный исследовательский университет",
                                 "Инженер (программист Fortran, C)")), "Санкт-Петербургский национальный исследовательский университет",

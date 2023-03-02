@@ -12,12 +12,12 @@ public class MainFileRecursion {
 
     public static void print(File file, int level) {
 
-        System.out.println( "*".repeat(level + 1 ) +    file.getName());
+        System.out.println("*".repeat(level + 1) + file.getName());
         for (File currentFile : Objects.requireNonNull(file.listFiles())) {
             if (currentFile.isDirectory()) {
                 print(currentFile, level + 1);
             } else {
-                System.out.println(" ".repeat(level + 1)  + currentFile.getName());
+                System.out.println(" ".repeat(level + 1) + currentFile.getName());
             }
         }
     }

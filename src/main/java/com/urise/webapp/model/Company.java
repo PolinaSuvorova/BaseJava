@@ -6,15 +6,19 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
     //Устанавливаем версию класса самостоятельно, чтобы не генерилась автоматически
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
-    private  String name;
-    private  String website;
+    private String name;
+    private String website;
     private List<Period> periods = new ArrayList<>();
-    public Company( ){}
+
+    public Company() {
+    }
+
     public Company(List<Period> periods, String name, String website) {
         this.periods = periods;
         this.name = name;

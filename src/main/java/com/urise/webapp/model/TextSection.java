@@ -7,8 +7,10 @@ public class TextSection extends AbstractSection {
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
     private String description;
+
     public TextSection() {
     }
+
     public TextSection(String description) {
         this.description = description;
     }
@@ -23,6 +25,10 @@ public class TextSection extends AbstractSection {
         return Objects.equals(description, that.description);
     }
 
+    public String getDescription() {
+        return description;
+    }
+
     @Override
     public int hashCode() {
         return description != null ? description.hashCode() : 0;
@@ -30,6 +36,6 @@ public class TextSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "----" + description;
+        return description;
     }
 }
