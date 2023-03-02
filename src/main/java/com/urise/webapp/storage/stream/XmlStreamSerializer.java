@@ -11,7 +11,11 @@ public class XmlStreamSerializer implements SerializerStrategy {
 
     public XmlStreamSerializer() {
         xmlParser = new XmlParser(
-                Resume.class, Company.class, CompanySection.class, Period.class, TextSection.class,
+                Resume.class,
+                Company.class,
+                CompanySection.class,
+                Period.class,
+                TextSection.class,
                 ListTextSection.class);
     }
 

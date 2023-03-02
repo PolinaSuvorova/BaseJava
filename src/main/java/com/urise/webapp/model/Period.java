@@ -14,12 +14,15 @@ public class Period implements Serializable {
     // При изменении класса самостоятельно ставим новую версию
     private static final long serialVersionID = 1L;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private final LocalDate startDate;
+    //@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
+    //@JsonDeserialize(using = LocalDateDeserializer.class)
+    //@JsonSerialize(using = LocalDateSerializer.class)
+    private  LocalDate startDate;
     @XmlJavaTypeAdapter(LocalDateAdapter.class)
-    private final LocalDate endDate;
-    private final String title;
-    private final String description;
-
+    private  LocalDate endDate;
+    private  String title;
+    private  String description;
+    public Period() {}
     public Period(LocalDate startDate, LocalDate endDate, String title, String description) {
         Objects.requireNonNull(startDate, "startDate must not be null");
         Objects.requireNonNull(title, "title must not be null");

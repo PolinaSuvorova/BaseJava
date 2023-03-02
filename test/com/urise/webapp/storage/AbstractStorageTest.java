@@ -10,7 +10,6 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,7 +164,7 @@ public abstract class AbstractStorageTest {
         experience.add(new Company(
                 Arrays.asList(
                         new Period(DateUtil.of(2013, Month.OCTOBER),
-                                LocalDate.MAX,
+                                DateUtil.of(999, Month.DECEMBER),
                                 "Автор проекта",
                                 "Создание, организация и проведение Java онлайн проектов и стажировок.")),
                 "Java Online Projects", "www.сайт.ru"));
