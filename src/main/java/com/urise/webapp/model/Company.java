@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Company implements Serializable {
@@ -20,15 +21,18 @@ public class Company implements Serializable {
     }
 
     public Company(List<Period> periods, String name, String website) {
+        Objects.requireNonNull(name, " name must not be null");
+        Objects.requireNonNull(website, " website must not be null");
         this.periods = periods;
         this.name = name;
         this.website = website;
     }
 
     public Company(String website, String name) {
+        Objects.requireNonNull(name, " name must not be null");
+        Objects.requireNonNull(website, " url must not be null");
         this.name = name;
         this.website = website;
-
     }
 
     public String getName() {

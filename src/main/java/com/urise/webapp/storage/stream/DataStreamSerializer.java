@@ -5,6 +5,7 @@ import com.urise.webapp.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -14,50 +15,51 @@ public class DataStreamSerializer implements SerializerStrategy {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
+
             Map<ContactType, Contact> contacts = r.getContacts();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, Contact> entry : contacts.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                dos.writeUTF(String.valueOf(entry.getValue()));
-            }
+            writeWithException(dos, contacts.entrySet(),
+                    entry -> {
+                       dos.writeUTF(entry.getKey().name());
+                       dos.writeUTF(String.valueOf(entry.getValue()));
+                      }
+            );
+
             Map<SectionType, AbstractSection> sections = r.getSections();
-            dos.writeInt(sections.size());
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
-                dos.writeUTF(entry.getKey().name());
-                switch (entry.getKey()) {
-                    case OBJECTIVE, PERSONAL ->
-                            dos.writeUTF(((TextSection) entry.getValue()).getDescription());
-                    case ACHIEVEMENT, QUALIFICATIONS -> {
-                        List<String> list = ((ListTextSection) entry.getValue()).getTextSections();
-                        dos.writeInt(list.size());
-                        for (String value : list) {
-                            dos.writeUTF(value);
-                        }
-                    }
-                    case EXPERIENCE, EDUCATION -> {
-                        List<Company> companyList = ((CompanySection) entry.getValue()).getCompanies();
-                        dos.writeInt(companyList.size());
-                        for (Company company : companyList) {
+            writeWithException(dos,sections.entrySet(),
+                    entry -> {
+                        dos.writeUTF(entry.getKey().name());
+                        switch (entry.getKey()) {
+                            case POSITION, PERSONAL -> dos.writeUTF(((TextSection) entry.getValue()).getDescription());
+                            case ACHIEVEMENT, QUALIFICATIONS -> {
+                                List<String> list = ((ListTextSection) entry.getValue()).getTextSections();
+                                writeWithException(dos, list, value -> dos.writeUTF(value));
+                            }
+                            case EXPERIENCE, EDUCATION -> {
+                                List<Company> companyList = ((CompanySection) entry.getValue()).getCompanies();
+                                writeWithException(dos, companyList, company -> {
+                                    dos.writeUTF(company.getName());
+                                    dos.writeUTF(company.getWebsite());
 
-                            dos.writeUTF(company.getName());
-                            dos.writeUTF(company.getWebsite());
-
-                            List<Period> periods = company.getPeriods();
-                            dos.writeInt(periods.size());
-                            for (Period period : periods) {
-                                dos.writeUTF(period.getStartDate().toString());
-                                dos.writeUTF(period.getEndDate().toString());
-                                dos.writeUTF(period.getTitle());
-                                dos.writeUTF(period.getDescription());
+                                    List<Period> periods = company.getPeriods();
+                                    writeWithException(dos, periods , period -> {
+                                        dos.writeUTF(period.getStartDate().toString());
+                                        dos.writeUTF(period.getEndDate().toString());
+                                        dos.writeUTF(period.getTitle());
+                                        dos.writeUTF(period.getDescription());
+                                    });
+                                });
                             }
                         }
-                    }
-                }
-
-            }
+                    });
         }
     }
-
+    private <T> void writeWithException(DataOutputStream dos, Collection<T> collection,
+                                        WriteElementCollection<T> writer) throws IOException {
+        dos.writeInt(collection.size());
+        for (T element : collection) {
+            writer.writeElementCollection(element);
+        }
+    }
     @Override
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
@@ -74,7 +76,7 @@ public class DataStreamSerializer implements SerializerStrategy {
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
 
                 switch (sectionType) {
-                    case OBJECTIVE, PERSONAL -> section = new TextSection(dis.readUTF());
+                    case POSITION, PERSONAL -> section = new TextSection(dis.readUTF());
                     case ACHIEVEMENT, QUALIFICATIONS -> {
                         List<String> list = new ArrayList<>();
                         int sizeList = dis.readInt();
@@ -102,7 +104,6 @@ public class DataStreamSerializer implements SerializerStrategy {
                                         dis.readUTF(),
                                         dis.readUTF()));
                             }
-
                             company.setPeriods(periods);
                             companies.add(company);
                         }
@@ -115,3 +116,4 @@ public class DataStreamSerializer implements SerializerStrategy {
         }
     }
 }
+

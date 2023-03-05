@@ -26,6 +26,8 @@ public class Resume implements Comparable<Resume>, Serializable {
     }
 
     public Resume(String uuid, String fullName) {
+        Objects.requireNonNull(uuid, " Resume.uuid must not be null");
+        Objects.requireNonNull(fullName, " Resume.fullName must not be null");
         this.uuid = uuid;
         this.fullName = fullName;
     }

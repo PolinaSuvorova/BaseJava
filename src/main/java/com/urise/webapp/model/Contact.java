@@ -16,6 +16,7 @@ public class Contact implements Serializable {
     }
 
     public Contact(String text) {
+        Objects.requireNonNull(text, " Contact.text must not be null");
         this.text = text;
     }
 

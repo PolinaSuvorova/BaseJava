@@ -133,9 +133,6 @@ public abstract class AbstractStorageTest {
     protected static Resume setCompletedResume(String uuid, String name) {
         Resume resume = new Resume(uuid, name);
 
-        //Личные качества
-        TextSection personal = new TextSection("Личные качества (текст) ");
-        resume.addSection(SectionType.PERSONAL, personal);
         //Контакты
         resume.addContact(ContactType.PHONE, new Contact("+7(921) 855-0482"));
         resume.addContact(ContactType.SKYPE, new Contact("skype:grigory.kislin"));
@@ -143,6 +140,7 @@ public abstract class AbstractStorageTest {
         resume.addContact(ContactType.LINKEDIN, new Contact("https://github.com/gkislin"));
         //Позиция
         resume.addSection(SectionType.POSITION, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
+        //Личные качества
         resume.addSection(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная" + " логика, креативность, инициативность. Пурист кода и архитектуры."));
 
         //Достижения

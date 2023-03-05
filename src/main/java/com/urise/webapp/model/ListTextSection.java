@@ -14,6 +14,7 @@ public class ListTextSection extends AbstractSection {
     }
 
     public ListTextSection(List<String> textSections) {
+
         this.textSections = textSections;
     }
 
