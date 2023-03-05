@@ -162,7 +162,7 @@ public abstract class AbstractStorageTest {
         experience.add(new Company(
                 Arrays.asList(
                         new Period(DateUtil.of(2013, Month.OCTOBER),
-                                DateUtil.of(999, Month.DECEMBER),
+                                DateUtil.of(9999, Month.DECEMBER),
                                 "Автор проекта",
                                 "Создание, организация и проведение Java онлайн проектов и стажировок.")),
                 "Java Online Projects", "www.сайт.ru"));

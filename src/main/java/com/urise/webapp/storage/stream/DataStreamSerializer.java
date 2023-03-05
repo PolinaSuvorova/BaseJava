@@ -37,8 +37,8 @@ public class DataStreamSerializer implements SerializerStrategy {
                             case EXPERIENCE, EDUCATION -> {
                                 List<Company> companyList = ((CompanySection) entry.getValue()).getCompanies();
                                 writeWithException(dos, companyList, company -> {
-                                    dos.writeUTF(company.getName());
                                     dos.writeUTF(company.getWebsite());
+                                    dos.writeUTF(company.getName());
 
                                     List<Period> periods = company.getPeriods();
                                     writeWithException(dos, periods , period -> {
