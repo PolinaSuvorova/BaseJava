@@ -4,10 +4,7 @@ import com.urise.webapp.model.*;
 
 import java.io.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class DataStreamSerializer implements SerializerStrategy {
     @Override
@@ -19,17 +16,18 @@ public class DataStreamSerializer implements SerializerStrategy {
             Map<ContactType, Contact> contacts = r.getContacts();
             writeWithException(dos, contacts.entrySet(),
                     entry -> {
-                       dos.writeUTF(entry.getKey().name());
-                       dos.writeUTF(String.valueOf(entry.getValue()));
-                      }
+                        dos.writeUTF(entry.getKey().name());
+                        dos.writeUTF(String.valueOf(entry.getValue()));
+                    }
             );
 
             Map<SectionType, AbstractSection> sections = r.getSections();
-            writeWithException(dos,sections.entrySet(),
+            writeWithException(dos, sections.entrySet(),
                     entry -> {
                         dos.writeUTF(entry.getKey().name());
                         switch (entry.getKey()) {
-                            case POSITION, PERSONAL -> dos.writeUTF(((TextSection) entry.getValue()).getDescription());
+                            case POSITION, PERSONAL ->
+                                    dos.writeUTF(((TextSection) entry.getValue()).getDescription());
                             case ACHIEVEMENT, QUALIFICATIONS -> {
                                 List<String> list = ((ListTextSection) entry.getValue()).getTextSections();
                                 writeWithException(dos, list, value -> dos.writeUTF(value));
@@ -41,7 +39,7 @@ public class DataStreamSerializer implements SerializerStrategy {
                                     dos.writeUTF(company.getName());
 
                                     List<Period> periods = company.getPeriods();
-                                    writeWithException(dos, periods , period -> {
+                                    writeWithException(dos, periods, period -> {
                                         dos.writeUTF(period.getStartDate().toString());
                                         dos.writeUTF(period.getEndDate().toString());
                                         dos.writeUTF(period.getTitle());
@@ -53,6 +51,7 @@ public class DataStreamSerializer implements SerializerStrategy {
                     });
         }
     }
+
     private <T> void writeWithException(DataOutputStream dos, Collection<T> collection,
                                         WriteElementCollection<T> writer) throws IOException {
         dos.writeInt(collection.size());
@@ -60,17 +59,27 @@ public class DataStreamSerializer implements SerializerStrategy {
             writer.writeElementCollection(element);
         }
     }
+
     @Override
     public Resume doRead(InputStream is) throws IOException {
         try (DataInputStream dis = new DataInputStream(is)) {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
+
+            //int size = dis.readInt();
+            //for (int i = 0; i < size; i++) {
+            //    ContactType contactType = ContactType.valueOf(dis.readUTF());
+            //    resume.addContact(contactType, new Contact(dis.readUTF(),contactType));
+            // }
+
+            readContacts( dis, () -> {
+                resume.addContact(ContactType.valueOf(dis.readUTF()),
+                        new Contact(dis.readUTF()));
+                return null;
+            });
+
             int size = dis.readInt();
-            for (int i = 0; i < size; i++) {
-                resume.addContact(ContactType.valueOf(dis.readUTF()), new Contact(dis.readUTF()));
-            }
-            size = dis.readInt();
             for (int i = 0; i < size; i++) {
                 AbstractSection section = null;
                 SectionType sectionType = SectionType.valueOf(dis.readUTF());
@@ -78,36 +87,50 @@ public class DataStreamSerializer implements SerializerStrategy {
                 switch (sectionType) {
                     case POSITION, PERSONAL -> section = new TextSection(dis.readUTF());
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        List<String> list = new ArrayList<>();
-                        int sizeList = dis.readInt();
-                        for (int j = 0; j < sizeList; j++) {
-                            list.add(dis.readUTF());
-                        }
-                        section = new ListTextSection(list);
+                        //List<String> list = new ArrayList<>();
+                        //int sizeList = dis.readInt();
+                        //for (int j = 0; j < sizeList; j++) {
+                        //    list.add(dis.readUTF());
+                        // }
+                        // section = new ListTextSection(list);
+                        section = new ListTextSection(readElements(dis, dis::readUTF));
                     }
                     case EXPERIENCE, EDUCATION -> {
-                        List<Company> companies = new ArrayList<>();
-                        int sizeList = dis.readInt();
+                     //   List<Company> companies = new ArrayList<>();
+                    //    int sizeList = dis.readInt();
 
-                        for (int j = 0; j < sizeList; j++) {
+                     //   for (int j = 0; j < sizeList; j++) {
 
-                            Company company = new Company(
-                                    dis.readUTF(),
-                                    dis.readUTF());
+                      //      Company company = new Company(
+                      //              dis.readUTF(),
+                      //              dis.readUTF());
 
-                            int periodCount = dis.readInt();
-                            List<Period> periods = new ArrayList<>();
-                            for (int k = 0; k < periodCount; k++) {
-                                periods.add(new Period(
-                                        LocalDate.parse(dis.readUTF()),
-                                        LocalDate.parse(dis.readUTF()),
-                                        dis.readUTF(),
-                                        dis.readUTF()));
-                            }
-                            company.setPeriods(periods);
-                            companies.add(company);
-                        }
-                        section = new CompanySection(companies);
+                      //      int periodCount = dis.readInt();
+                      //      List<Period> periods = new ArrayList<>();
+                      //      for (int k = 0; k < periodCount; k++) {
+                      //          periods.add(new Period(
+                      //                  LocalDate.parse(dis.readUTF()),
+                      //                  LocalDate.parse(dis.readUTF()),
+                     //                   dis.readUTF(),
+                     //                   dis.readUTF()));
+                     //       }
+                     //       company.setPeriods(periods);
+                     //       companies.add(company);
+                     //   }
+                     //   section = new CompanySection(companies);
+
+                        section = new CompanySection(
+                                readElements(dis, () -> {
+                                    Company company = new Company(dis.readUTF(), dis.readUTF() );
+                                    company.setPeriods(
+                                            readElements(dis,() -> new Period(
+                                                    LocalDate.parse(dis.readUTF()),
+                                                    LocalDate.parse(dis.readUTF()),
+                                                    dis.readUTF(), dis.readUTF()
+                                                    )));
+                                    return company;
+                                }) );
+
                     }
                 }
                 resume.addSection(sectionType, section);
@@ -115,5 +138,22 @@ public class DataStreamSerializer implements SerializerStrategy {
             return resume;
         }
     }
+
+    private <T> List<T> readElements(DataInputStream dos,
+                                     ReadElementFromFile<T> reader) throws IOException {
+        int size = dos.readInt();
+        List<T> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(reader.readElementFromFile());
+        }
+        return list;
+    }
+    private void readContacts(DataInputStream dis, ReadElementFromFile reader) throws IOException {
+        int size = dis.readInt();
+        for (int i = 0; i < size; i++) {
+            reader.readElementFromFile();
+        }
+    }
 }
+
 
