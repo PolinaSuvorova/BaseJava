@@ -1,7 +1,9 @@
 package com.urise.webapp;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class MainConcurrency {
     // Счётчик потоков
@@ -30,27 +32,32 @@ public class MainConcurrency {
         });
         thread1.start();
         System.out.println(thread.getState());
+
+        CountDownLatch latch = new CountDownLatch(1000);
         MainConcurrency main = new MainConcurrency();
-        List<Thread> threadList = new ArrayList<>();
+          ExecutorService executorService = Executors.newCachedThreadPool();
+        //List<Thread> threadList = new ArrayList<>();
         //Запуск процессов и сохранение ин-фы в список
         for (int i = 0; i < 1000; i++) {
-            Thread threadX = new Thread(() -> {
-                for (int j = 0; j < 100; j++) {
-                    main.intCounter();
-                }
-            });
-            threadX.start();
-            threadList.add(threadX);
-        }
-        //Ожидание завершения всех открытых процессов
-        threadList.forEach(thread2 -> {
-            try {
-                thread2.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        });
+            executorService.submit(()->
+   /*         Thread threadX = new Thread(() -> { */
+                // После выполнения средом своей задачи уменьшаем счётчик
+                    {
+                        for (int j = 0; j < 100; j++) {
+                            main.intCounter();
 
+                        }
+                        // уменьшение на 1 замена ожидания через join
+                        latch.countDown();
+                    }
+             );
+  /*           threadX.start();
+            //         threadList.add(threadX); */
+        }
+//Ожидание завершения всех открытых процессов 10 секунд
+        latch.await(10, TimeUnit.SECONDS);
+        //Завершение среда
+        executorService.shutdown();
         System.out.println(counter);
 
     }

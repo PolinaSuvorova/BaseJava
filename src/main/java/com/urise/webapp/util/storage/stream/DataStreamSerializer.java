@@ -26,8 +26,9 @@ public class DataStreamSerializer implements SerializerStrategy {
                     entry -> {
                         dos.writeUTF(entry.getKey().name());
                         switch (entry.getKey()) {
-                            case POSITION, PERSONAL ->
-                                    dos.writeUTF(((TextSection) entry.getValue()).getDescription());
+                            case POSITION, PERSONAL -> {
+                                dos.writeUTF(((TextSection) entry.getValue()).getDescription());
+                            }
                             case ACHIEVEMENT, QUALIFICATIONS -> {
                                 List<String> list = ((ListTextSection) entry.getValue()).getTextSections();
                                 writeWithException(dos, list, value -> dos.writeUTF(value));
