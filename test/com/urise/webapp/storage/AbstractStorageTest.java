@@ -5,6 +5,7 @@ import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.DateUtil;
+import com.urise.webapp.util.storage.Storage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

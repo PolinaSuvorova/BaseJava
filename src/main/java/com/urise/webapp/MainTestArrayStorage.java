@@ -1,8 +1,8 @@
 package com.urise.webapp;
 
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.MapStorage;
-import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.storage.MapStorage;
+import com.urise.webapp.util.storage.Storage;
 
 /**
  * Test for your com.urise.webapp.storage.ArrayStorage implementation

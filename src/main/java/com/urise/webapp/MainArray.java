@@ -2,8 +2,8 @@ package com.urise.webapp;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.storage.SortedArrayStorage;
-import com.urise.webapp.storage.Storage;
+import com.urise.webapp.util.storage.SortedArrayStorage;
+import com.urise.webapp.util.storage.Storage;
 
 import java.io.BufferedReader;
 import java.io.IOException;

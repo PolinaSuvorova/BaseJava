@@ -1,4 +1,4 @@
-package com.urise.webapp.storage.stream;
+package com.urise.webapp.util.storage.stream;
 
 import com.urise.webapp.model.*;
 
@@ -67,13 +67,7 @@ public class DataStreamSerializer implements SerializerStrategy {
             String fullName = dis.readUTF();
             Resume resume = new Resume(uuid, fullName);
 
-            //int size = dis.readInt();
-            //for (int i = 0; i < size; i++) {
-            //    ContactType contactType = ContactType.valueOf(dis.readUTF());
-            //    resume.addContact(contactType, new Contact(dis.readUTF(),contactType));
-            // }
-
-            readContacts( dis, () -> {
+            readWithException(dis, () -> {
                 resume.addContact(ContactType.valueOf(dis.readUTF()),
                         new Contact(dis.readUTF()));
                 return null;
@@ -87,49 +81,20 @@ public class DataStreamSerializer implements SerializerStrategy {
                 switch (sectionType) {
                     case POSITION, PERSONAL -> section = new TextSection(dis.readUTF());
                     case ACHIEVEMENT, QUALIFICATIONS -> {
-                        //List<String> list = new ArrayList<>();
-                        //int sizeList = dis.readInt();
-                        //for (int j = 0; j < sizeList; j++) {
-                        //    list.add(dis.readUTF());
-                        // }
-                        // section = new ListTextSection(list);
-                        section = new ListTextSection(readElements(dis, dis::readUTF));
+                        section = new ListTextSection(readListWithException(dis, dis::readUTF));
                     }
                     case EXPERIENCE, EDUCATION -> {
-                     //   List<Company> companies = new ArrayList<>();
-                    //    int sizeList = dis.readInt();
-
-                     //   for (int j = 0; j < sizeList; j++) {
-
-                      //      Company company = new Company(
-                      //              dis.readUTF(),
-                      //              dis.readUTF());
-
-                      //      int periodCount = dis.readInt();
-                      //      List<Period> periods = new ArrayList<>();
-                      //      for (int k = 0; k < periodCount; k++) {
-                      //          periods.add(new Period(
-                      //                  LocalDate.parse(dis.readUTF()),
-                      //                  LocalDate.parse(dis.readUTF()),
-                     //                   dis.readUTF(),
-                     //                   dis.readUTF()));
-                     //       }
-                     //       company.setPeriods(periods);
-                     //       companies.add(company);
-                     //   }
-                     //   section = new CompanySection(companies);
-
                         section = new CompanySection(
-                                readElements(dis, () -> {
-                                    Company company = new Company(dis.readUTF(), dis.readUTF() );
+                                readListWithException(dis, () -> {
+                                    Company company = new Company(dis.readUTF(), dis.readUTF());
                                     company.setPeriods(
-                                            readElements(dis,() -> new Period(
+                                            readListWithException(dis, () -> new Period(
                                                     LocalDate.parse(dis.readUTF()),
                                                     LocalDate.parse(dis.readUTF()),
                                                     dis.readUTF(), dis.readUTF()
-                                                    )));
+                                            )));
                                     return company;
-                                }) );
+                                }));
 
                     }
                 }
@@ -138,9 +103,10 @@ public class DataStreamSerializer implements SerializerStrategy {
             return resume;
         }
     }
-
-    private <T> List<T> readElements(DataInputStream dos,
-                                     ReadElementFromFile<T> reader) throws IOException {
+    
+    
+    private <T> List<T> readListWithException(DataInputStream dos,
+                                              ReadElementFromFile<T> reader) throws IOException {
         int size = dos.readInt();
         List<T> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
@@ -148,7 +114,8 @@ public class DataStreamSerializer implements SerializerStrategy {
         }
         return list;
     }
-    private void readContacts(DataInputStream dis, ReadElementFromFile reader) throws IOException {
+
+    private void readWithException(DataInputStream dis, ReadElementFromFile reader) throws IOException {
         int size = dis.readInt();
         for (int i = 0; i < size; i++) {
             reader.readElementFromFile();

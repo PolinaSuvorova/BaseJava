@@ -1,4 +1,4 @@
-package com.urise.webapp.storage.stream;
+package com.urise.webapp.util.storage.stream;
 
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.XmlParser;
