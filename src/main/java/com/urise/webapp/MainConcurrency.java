@@ -4,10 +4,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainConcurrency {
     // Счётчик потоков
-    private static int counter;
+    private static AtomicInteger counter = new AtomicInteger( );
 
     public static void main(String[] args) throws InterruptedException {
 
@@ -23,50 +24,37 @@ public class MainConcurrency {
             }
         };
         thread.start();
-        Thread thread1 = new Thread(new Runnable() {
-            @Override
-            public void run() {
+        Thread thread1 = new Thread(() ->
                 System.out.println(Thread.currentThread().getName() + ", " + Thread.currentThread().getState()
-                );
-            }
-        });
+        ));
         thread1.start();
         System.out.println(thread.getState());
 
         CountDownLatch latch = new CountDownLatch(1000);
         MainConcurrency main = new MainConcurrency();
           ExecutorService executorService = Executors.newCachedThreadPool();
-        //List<Thread> threadList = new ArrayList<>();
         //Запуск процессов и сохранение ин-фы в список
         for (int i = 0; i < 1000; i++) {
             executorService.submit(()->
-   /*         Thread threadX = new Thread(() -> { */
                 // После выполнения средом своей задачи уменьшаем счётчик
                     {
                         for (int j = 0; j < 100; j++) {
                             main.intCounter();
-
                         }
                         // уменьшение на 1 замена ожидания через join
                         latch.countDown();
                     }
              );
-  /*           threadX.start();
-            //         threadList.add(threadX); */
         }
 //Ожидание завершения всех открытых процессов 10 секунд
         latch.await(10, TimeUnit.SECONDS);
         //Завершение среда
         executorService.shutdown();
-        System.out.println(counter);
+        System.out.println(counter.get());
 
     }
 
     private void intCounter() {
-        double a = Math.sin(13.);
-        // Установка синхронизации потоков. Установка в очередь
-        synchronized (this) {
-            counter++;
-        }
+        counter.incrementAndGet();
     }
 }
