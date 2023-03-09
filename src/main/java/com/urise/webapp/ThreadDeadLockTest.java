@@ -8,7 +8,7 @@ public class ThreadDeadLockTest {
         Thread thread1 = new Thread(() -> {
             synchronized (lock1) {
                 System.out.println("Поток 1 блокировка lock1 ");
-                  synchronized (lock2) {
+                synchronized (lock2) {
                     System.out.println("Поток 1 блокировка lock1 lock2");
                 }
             }
