@@ -4,6 +4,7 @@ import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.*;
+import com.urise.webapp.util.Config;
 import com.urise.webapp.util.DateUtil;
 import com.urise.webapp.util.storage.Storage;
 import org.junit.Assert;
@@ -18,8 +19,7 @@ import java.util.List;
 
 public abstract class AbstractStorageTest {
     final protected Storage storage;
-    protected static final String STORAGE_DIR_TXT = "C:\\Users\\ptatara\\Desktop\\TestDirectory2";
-    protected static final File STORAGE_DIR = new File(STORAGE_DIR_TXT);
+    protected static final File STORAGE_DIR = Config.getInstance().getStorageDir();
     private static final String UUID_1 = "uuid_1";
     private static final String UUID_2 = "uuid_2";
     private static final String UUID_3 = "uuid_3";
