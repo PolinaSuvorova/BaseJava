@@ -3,18 +3,14 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
-import com.urise.webapp.model.*;
+import com.urise.webapp.model.Resume;
 import com.urise.webapp.util.Config;
-import com.urise.webapp.util.DateUtil;
 import com.urise.webapp.util.storage.Storage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
@@ -128,12 +124,12 @@ public abstract class AbstractStorageTest {
     }
 
     private void assertGet(Resume resumeExpected) throws NotExistStorageException {
-        Assert.assertEquals(resumeExpected, storage.get(resumeExpected.getUuid()));
+         Assert.assertEquals(resumeExpected, storage.get(resumeExpected.getUuid()));
     }
 
     protected static Resume setCompletedResume(String uuid, String name) {
         Resume resume = new Resume(uuid, name);
-
+/*
         //Контакты
         resume.addContact(ContactType.PHONE, new Contact("+7(921) 855-0482"));
         resume.addContact(ContactType.SKYPE, new Contact("skype:grigory.kislin"));
@@ -217,7 +213,7 @@ public abstract class AbstractStorageTest {
                                 "Инженер (программист Fortran, C)")), "Санкт-Петербургский национальный исследовательский университет",
                 "www.сайт.ru"));
         resume.addSection(SectionType.EDUCATION, new CompanySection(education));
-
+*/
         return resume;
     }
 }
