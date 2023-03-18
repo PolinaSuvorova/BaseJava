@@ -1,4 +1,4 @@
-package com.urise.webapp.util.storage.stream;
+package com.urise.webapp.storage.stream;
 
 import java.io.IOException;
 

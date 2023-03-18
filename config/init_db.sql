@@ -6,8 +6,10 @@ create table resume
             primary key,
     full_name text                                                  not null
 );
-comment on column resume.uuid is 'ID';
-comment on column resume.full_name is 'ФИО';
+comment
+on column resume.uuid is 'ID';
+comment
+on column resume.full_name is 'ФИО';
 alter table resume
     owner to postgres;
 
@@ -26,7 +28,8 @@ create table contact
             on update restrict on delete cascade
 );
 
-comment on table contact is 'Контакты';
+comment
+on table contact is 'Контакты';
 
 alter table contact
     owner to postgres;

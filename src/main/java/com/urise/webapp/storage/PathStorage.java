@@ -1,8 +1,8 @@
-package com.urise.webapp.util.storage;
+package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
-import com.urise.webapp.util.storage.stream.SerializerStrategy;
+import com.urise.webapp.storage.stream.SerializerStrategy;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;

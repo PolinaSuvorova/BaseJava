@@ -5,7 +5,6 @@ import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.util.Config;
-import com.urise.webapp.util.storage.Storage;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -68,7 +67,7 @@ public abstract class AbstractStorageTest {
     @Test
     public void update() throws Exception {
         storage.update(UUID_1, NAME_4);
-//        Assert.assertSame(RESUME_4, storage.get(UUID_1));
+//       Assert.assertSame(RESUME_4, storage.get(UUID_1));
     }
 
     @Test(expected = StorageException.class)
@@ -124,7 +123,7 @@ public abstract class AbstractStorageTest {
     }
 
     private void assertGet(Resume resumeExpected) throws NotExistStorageException {
-         Assert.assertEquals(resumeExpected, storage.get(resumeExpected.getUuid()));
+        Assert.assertEquals(resumeExpected, storage.get(resumeExpected.getUuid()));
     }
 
     protected static Resume setCompletedResume(String uuid, String name) {

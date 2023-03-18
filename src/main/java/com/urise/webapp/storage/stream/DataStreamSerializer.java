@@ -1,4 +1,4 @@
-package com.urise.webapp.util.storage.stream;
+package com.urise.webapp.storage.stream;
 
 import com.urise.webapp.model.*;
 
@@ -104,8 +104,8 @@ public class DataStreamSerializer implements SerializerStrategy {
             return resume;
         }
     }
-    
-    
+
+
     private <T> List<T> readListWithException(DataInputStream dos,
                                               ReadElementFromFile<T> reader) throws IOException {
         int size = dos.readInt();

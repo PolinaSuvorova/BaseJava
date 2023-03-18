@@ -6,16 +6,16 @@ public class ThreadDeadLockTest {
 
     public static void main(String[] args) {
         Thread thread1 = new Thread(() -> {
-            lock(lock1,lock2);
+            lock(lock1, lock2);
         });
         Thread thread2 = new Thread(() -> {
-            lock(lock2,lock1);
+            lock(lock2, lock1);
         });
         thread1.start();
         thread2.start();
     }
 
-    private static void lock(Object lock1,Object lock2) {
+    private static void lock(Object lock1, Object lock2) {
         synchronized (lock1) {
             System.out.println("блокировка" + lock1);
             synchronized (lock2) {

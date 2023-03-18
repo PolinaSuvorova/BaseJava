@@ -7,13 +7,16 @@
 ### Подготовка рабочего окружения
 
 -
+
 Установите [JDK8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (
 выбрать Accept License Agreement)
+
 - Установите систему управления версиями [Git](http://git-scm.com/downloads)
 - Создайте аккаунт на [GitHub](https://github.com/)
 - Для удобной навигации по файлам на GitHub установите расширение для
   браузера [Octotree](https://habrahabr.ru/post/223527/)
 -
+
 Установите [IntelliJ IDEA Community](http://www.jetbrains.com/idea/download/index.html) (
 Ultimate-версия понадобится позже, при работе с базой данных и web)
 
