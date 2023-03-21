@@ -26,6 +26,7 @@ public class SqlHelper {
             throw ExceptionUtil.convertException(e);
         }
     }
+
     public <T> T transactionalExecute(SqlTransaction<T> executor) {
         try (Connection conn = connectionFactory.getConnection()) {
             try {
