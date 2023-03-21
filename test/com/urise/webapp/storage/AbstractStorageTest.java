@@ -3,6 +3,8 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
+import com.urise.webapp.model.Contact;
+import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.util.Config;
 import org.junit.Assert;
@@ -66,13 +68,14 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() throws Exception {
-        storage.update(UUID_1, NAME_4);
+        storage.update(UUID_1, RESUME_4);
 //       Assert.assertSame(RESUME_4, storage.get(UUID_1));
     }
 
     @Test(expected = StorageException.class)
     public void updateNotExist() throws Exception {
-        storage.update(UUID_DUMMY, NAME_DUMMY);
+        Resume resume_dummy = new Resume(UUID_DUMMY,NAME_DUMMY);
+        storage.update(UUID_DUMMY, resume_dummy);
     }
 
     @Test
@@ -128,12 +131,13 @@ public abstract class AbstractStorageTest {
 
     protected static Resume setCompletedResume(String uuid, String name) {
         Resume resume = new Resume(uuid, name);
-/*
+
         //Контакты
         resume.addContact(ContactType.PHONE, new Contact("+7(921) 855-0482"));
         resume.addContact(ContactType.SKYPE, new Contact("skype:grigory.kislin"));
         resume.addContact(ContactType.EMAIL, new Contact("gkislin@yandex.ru"));
         resume.addContact(ContactType.LINKEDIN, new Contact("https://github.com/gkislin"));
+/*
         //Позиция
         resume.addSection(SectionType.POSITION, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         //Личные качества

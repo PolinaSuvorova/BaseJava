@@ -13,9 +13,8 @@ public abstract class AbstractStorage<SK> implements Storage {
             Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid);
 
     @Override
-    public void update(String uuid, String fullName) {
+    public void update(String uuid, Resume resume) {
         SK searchKey = getExistingSearchKey(uuid);
-        Resume resume = new Resume(uuid, fullName);
         doUpdate(searchKey, resume);
     }
 

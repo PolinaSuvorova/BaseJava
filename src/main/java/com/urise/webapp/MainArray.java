@@ -59,7 +59,8 @@ public class MainArray {
                         break;
                     case "update":
                         if (fullName != null) {
-                            ARRAY_STORAGE.update(uuid, fullName);
+                            Resume resume = new Resume(uuid, fullName);
+                            ARRAY_STORAGE.update(uuid, resume);
                         }
                         printAll();
                         break;

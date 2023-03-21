@@ -7,7 +7,7 @@ import java.util.List;
 public interface Storage {
     void clear();
 
-    void update(String uuid, String fullName);
+    void update(String uuid, Resume resume);
 
     void save(Resume resume);
 

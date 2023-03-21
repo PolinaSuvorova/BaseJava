@@ -9,6 +9,7 @@ import com.urise.webapp.sql.SqlHelper;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,10 @@ public class SQLStorage implements Storage {
     }
 
     @Override
-    public void update(String uuid, String fullName) {
+    public void update(String uuid, Resume resume) {
         sqlHelper.execute("UPDATE resume SET full_name = ? WHERE uuid = ?",
                 ps -> {
-                    ps.setString(1, fullName);
+                    ps.setString(1, resume.getFullName( ));
                     ps.setString(2, uuid);
                     if (ps.executeUpdate() == 0) {
                         throw new NotExistStorageException(uuid);
@@ -81,13 +82,7 @@ public class SQLStorage implements Storage {
                     if (!rs.next()) {
                         throw new NotExistStorageException(uuid);
                     }
-                    Resume r = new Resume(uuid, rs.getString("full_name"));
-                    do {
-                        String value = rs.getString("value");
-                        ContactType type = ContactType.valueOf(rs.getString("type"));
-                        r.addContact(type, new Contact(value));
-                    } while (rs.next());
-                    return r;
+                    return addResumeWithContacts(rs, uuid);
                 });
     }
 
@@ -105,15 +100,19 @@ public class SQLStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.execute("SELECT * FROM resume r ORDER BY full_name,uuid", ps -> {
-            ResultSet rs = ps.executeQuery();
-            List<Resume> resumes = new ArrayList<>();
-            while (rs.next()) {
-                resumes.add(new Resume(rs.getString("uuid"),
-                        rs.getString("full_name")));
-            }
-            return resumes;
-        });
+        return sqlHelper.execute(
+                "SELECT * FROM resume r  " +
+                        "LEFT JOIN contact c " +
+                        "ON r.uuid = c.resume_uuid " +
+                        "ORDER BY full_name,uuid", ps -> {
+                    ResultSet rs = ps.executeQuery();
+                    List<Resume> resumes = new ArrayList<>();
+                    while (rs.next()) {
+                        Resume resume = addResumeWithContacts(rs, rs.getString("uuid"));
+                        resumes.add(resume);
+                    }
+                    return resumes;
+                });
     }
 
     @Override
@@ -126,5 +125,20 @@ public class SQLStorage implements Storage {
                     }
                     return rs.getInt(1);
                 });
+    }
+
+    private Resume addResumeWithContacts(ResultSet rs, String uuid) throws SQLException {
+        Resume r = new Resume(uuid, rs.getString("full_name"));
+        do {
+            addContact(rs, r);
+        } while (rs.next());
+        return r;
+    }
+
+    private void addContact(ResultSet rs, Resume r) throws SQLException {
+        String value = rs.getString("value");
+        if (value != null) {
+            r.addContact(ContactType.valueOf(rs.getString("type")), new Contact(value));
+        }
     }
 }
