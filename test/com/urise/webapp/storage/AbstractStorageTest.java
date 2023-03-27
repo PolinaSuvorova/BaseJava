@@ -3,15 +3,14 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
-import com.urise.webapp.model.Contact;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import com.urise.webapp.util.Config;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 public abstract class AbstractStorageTest {
@@ -137,7 +136,7 @@ public abstract class AbstractStorageTest {
         resume.addContact(ContactType.SKYPE, new Contact("skype:grigory.kislin"));
         resume.addContact(ContactType.EMAIL, new Contact("gkislin@yandex.ru"));
         resume.addContact(ContactType.LINKEDIN, new Contact("https://github.com/gkislin"));
-/*
+
         //Позиция
         resume.addSection(SectionType.POSITION, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
         //Личные качества
@@ -156,7 +155,7 @@ public abstract class AbstractStorageTest {
         qualifications.add("Languages: Java, Scala, Python/Jython/PL-Python, JavaScript," + " Groovy");
         qualifications.add("XML/XSD/XSLT, SQL, C/C++, Unix shell scripts");
         resume.addSection(SectionType.QUALIFICATIONS, new ListTextSection(qualifications));
-        //Опыт
+ /*       //Опыт
         List<Company> experience = new ArrayList<>();
 
         experience.add(new Company(
