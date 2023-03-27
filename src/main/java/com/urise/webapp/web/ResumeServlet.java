@@ -22,10 +22,10 @@ public class ResumeServlet extends HttpServlet {
         PrintWriter writer = response.getWriter();
         writer.println(
                 "<table>\n" +
-                "<tbody>\n" +
-                "<tr>\n" +
-                "<th>UUID</th><th>Full Name</th>\n" +
-                "</tr>");
+                        "<tbody>\n" +
+                        "<tr>\n" +
+                        "<th>UUID</th><th>Full Name</th>\n" +
+                        "</tr>");
         List<Resume> list = Config.getInstance()
                 .getSqlStorage()
                 .getAllSorted();
@@ -37,7 +37,7 @@ public class ResumeServlet extends HttpServlet {
         }
         writer.println(
                 "</tbody\n" +
-                "</table>");
+                        "</table>");
     }
 
     @Override
