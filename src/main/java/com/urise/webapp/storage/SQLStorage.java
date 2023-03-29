@@ -28,19 +28,10 @@ public class SQLStorage implements Storage {
 
     @Override
     public void update(String uuid, Resume resume) {
-        Resume r = new Resume(uuid, resume.getFullName());
-
-        for (Map.Entry<SectionType,AbstractSection> e : r.getSections().entrySet()) {
-            r.addSection( e.getKey(), e.getValue() );
-        }
-        for (Map.Entry<ContactType,Contact> e : r.getContacts().entrySet() ){
-            r.addContact( e.getKey(), e.getValue() );
-        }
-
         sqlHelper.transactionalExecute(conn -> {
             try (PreparedStatement ps = conn.prepareStatement(
                     "UPDATE resume SET full_name = ? WHERE uuid = ?")) {
-                ps.setString(1, r.getFullName());
+                ps.setString(1, resume.getFullName());
                 ps.setString(2, uuid);
                 if (ps.executeUpdate() != 1) {
                     throw new NotExistStorageException(resume.getUuid());
@@ -48,8 +39,8 @@ public class SQLStorage implements Storage {
             }
             deleteContacts(uuid);
             deleteSections(uuid);
-            insertContacts(conn, r);
-            insertSections(conn, r);
+            insertContacts(conn, resume);
+            insertSections(conn, resume);
             return null;
         });
     }
@@ -149,19 +140,24 @@ public class SQLStorage implements Storage {
                             ps.addBatch();
                             break;
                         case ACHIEVEMENT, QUALIFICATIONS: {
-                            List<String> listString = new ArrayList<>();
                             ListTextSection textListSection = (ListTextSection) r.getSection(sectionType);
-                            List<String> list = textListSection.getTextSections();
-                            for (String text : textListSection.getTextSections()
-                            ) {
-                                ps.setString(1, uuid);
-                                ps.setString(2, sectTy);
-                                ps.setString(3, text);
-                                ps.addBatch();
+                            ps.setString(1, uuid);
+                            ps.setString(2, sectTy);
+                            StringBuilder textInSection = new StringBuilder();
+                            List<String> textSections = textListSection.getTextSections();
+                            for (int i = 0; i < textSections.size(); i++) {
+                                String text = textSections.get(i);
+                                if (i == 1) {
+                                    textInSection.append(text);
+                                } else {
+                                    textInSection.append("\n");
+                                    textInSection.append(text);
+                                }
                             }
+                            ps.setString(3, textInSection.toString());
+                            ps.addBatch();
                             break;
                         }
-
                         case EXPERIENCE, EDUCATION:
 
                     }
@@ -199,19 +195,6 @@ public class SQLStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-    /*-->    return sqlHelper.execute(
-                "SELECT * FROM resume r  " +
-                        "LEFT JOIN contact c " +
-                        "ON r.uuid = c.resume_uuid " +
-                        "ORDER BY full_name,uuid", ps -> {
-                    ResultSet rs = ps.executeQuery();
-                    List<Resume> resumes = new ArrayList<>();
-                    while (rs.next()) {
-                        Resume resume = addResumeWithContacts(rs, rs.getString("uuid"));
-                        resumes.add(resume);
-                    }
-                    return resumes;
-                });<--*/
         return sqlHelper.transactionalExecute(conn -> {
             Map<String, Resume> resumes = new HashMap<>();
             try (PreparedStatement ps = conn.prepareStatement(
@@ -271,37 +254,23 @@ public class SQLStorage implements Storage {
 
     private void addSection(ResultSet rs, Resume r) throws SQLException {
         SectionType sectionType = SectionType.valueOf(rs.getString("type"));
-        try{
-            switch (sectionType) {
-                case ACHIEVEMENT, QUALIFICATIONS:
-                    ListTextSection listTextSection = (ListTextSection) r.getSection(sectionType);
-                    List<String> list = listTextSection.getTextSections();
-                    list.add(rs.getString("text"));
-                case PERSONAL:
-                    TextSection textSection = (TextSection) r.getSection(sectionType);
-                case EXPERIENCE, EDUCATION, POSITION:
-                    throw new IllegalStateException("Unexpected value: " + sectionType);
+        AbstractSection aSection;
+        switch (sectionType) {
+            case POSITION, PERSONAL -> {
+                aSection = new TextSection(rs.getString("text"));
+                r.addSection(sectionType, aSection);
             }
-        } catch (RuntimeException ex) {
-            AbstractSection aSection;
-            switch (sectionType) {
-                case POSITION, PERSONAL:
-                    aSection = new TextSection(rs.getString("text"));
-                    r.addSection(sectionType, aSection);
-                    break;
-                case ACHIEVEMENT, QUALIFICATIONS: {
-                    List<String> listString = new ArrayList<>();
-                    listString.add(rs.getString("text"));
-                    aSection = new ListTextSection(listString);
-                    r.addSection(sectionType, aSection);
-                    break;
-                }
-                case EXPERIENCE, EDUCATION:
-                    throw new IllegalStateException("Unexpected value: " + sectionType);
+            case ACHIEVEMENT, QUALIFICATIONS -> {
+                ArrayList<String> listString = new ArrayList<>();
+                String allTexts = rs.getString("text");
+                String[] lines = allTexts.split("\n", 0);
+                Collections.addAll(listString, lines);
+                aSection = new ListTextSection(listString);
+                r.addSection(sectionType, aSection);
             }
+            case EXPERIENCE, EDUCATION -> throw new IllegalStateException("Unexpected value: " + sectionType);
         }
     }
-
 }
 
 
