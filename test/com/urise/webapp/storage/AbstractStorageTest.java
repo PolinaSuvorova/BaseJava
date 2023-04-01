@@ -3,51 +3,29 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.exception.StorageException;
-import com.urise.webapp.model.*;
+import com.urise.webapp.model.Contact;
+import com.urise.webapp.model.ContactType;
+import com.urise.webapp.model.Resume;
 import com.urise.webapp.util.Config;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
+
+import static com.urise.webapp.TestData.*;
 
 public abstract class AbstractStorageTest {
     final protected Storage storage;
     protected static final File STORAGE_DIR = Config.getInstance().getStorageDir();
-    private static final String UUID_1 = "uuid_1";
-    private static final String UUID_2 = "uuid_2";
-    private static final String UUID_3 = "uuid_3";
-    private static final String UUID_4 = "uuid_4";
-    private static final String UUID_DUMMY = "UUID_DUMMY";
-
-    private static final String NAME_1 = "NAME_1";
-    private static final String NAME_2 = "NAME_2";
-    private static final String NAME_3 = "NAME_3";
-    private static final String NAME_4 = "NAME_4";
-    private static final String NAME_DUMMY = "NAME_DUMMY";
-    private static final Resume RESUME_1;
-    private static final Resume RESUME_2;
-    private static final Resume RESUME_3;
-    private static final Resume RESUME_4;
-
-    private static final Resume RESUME_DUMMY;
-
-    static {
-        RESUME_1 = setCompletedResume(UUID_1, NAME_1);
-        RESUME_2 = setCompletedResume(UUID_2, NAME_2);
-        RESUME_3 = setCompletedResume(UUID_3, NAME_3);
-        RESUME_4 = setCompletedResume(UUID_4, NAME_4);
-        RESUME_DUMMY = setCompletedResume(UUID_DUMMY, NAME_DUMMY);
-    }
 
     @Before
     public void setUp() throws Exception {
         storage.clear();
-        storage.save(RESUME_1);
-        storage.save(RESUME_2);
-        storage.save(RESUME_3);
+        storage.save(R1);
+        storage.save(R2);
+        storage.save(R3);
     }
 
     public AbstractStorageTest(Storage storage) {
@@ -67,31 +45,35 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() throws Exception {
-        storage.update(UUID_1, RESUME_1);
+        Resume newResume = new Resume(UUID_1, "New Name");
+        newResume.addContact(ContactType.EMAIL, new Contact("New@google.com"));
+        newResume.addContact(ContactType.SKYPE, new Contact("NewSkype"));
+        newResume.addContact(ContactType.PHONE, new Contact("+7 921 222-22-22"));
+        storage.update(newResume.getUuid(), newResume);
+        Assert.assertTrue(newResume.equals(storage.get(R1.getUuid())));
     }
 
     @Test(expected = StorageException.class)
     public void updateNotExist() throws Exception {
-        Resume resume_dummy = new Resume(UUID_DUMMY,NAME_DUMMY);
-        storage.update(UUID_DUMMY, resume_dummy);
+        storage.update(R4.getUuid(), R4);
     }
 
     @Test
     public void save() throws Exception {
-        storage.save(RESUME_4);
-        assertGet(RESUME_4);
+        storage.save(R4);
+        assertGet(R4);
     }
 
     @Test(expected = ExistStorageException.class)
     public void saveStorageException() {
-        storage.save(RESUME_1);
+        storage.save(R1);
     }
 
     @Test
     public void get() throws Exception {
-        assertGet(RESUME_1);
-        assertGet(RESUME_2);
-        assertGet(RESUME_3);
+        assertGet(R1);
+        assertGet(R2);
+        assertGet(R3);
         assertSize(3);
     }
 
@@ -102,19 +84,19 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = NotExistStorageException.class)
     public void delete() throws Exception {
-        storage.delete(RESUME_1.getUuid());
+        storage.delete(R1.getUuid());
         assertSize(2);
-        assertGet(RESUME_1);
+        assertGet(R1);
     }
 
     @Test(expected = NotExistStorageException.class)
     public void deleteNotExist() throws Exception {
-        storage.delete(RESUME_DUMMY.getUuid());
+        storage.delete(R4.getUuid());
     }
 
     @Test
     public void getAllSorted() throws Exception {
-        Resume[] expected = {RESUME_1, RESUME_2, RESUME_3};
+        Resume[] expected = {R1, R2, R3};
         List<Resume> current = storage.getAllSorted();
         Assert.assertArrayEquals(expected, current.toArray());
     }
@@ -125,96 +107,5 @@ public abstract class AbstractStorageTest {
 
     private void assertGet(Resume resumeExpected) throws NotExistStorageException {
         Assert.assertEquals(resumeExpected, storage.get(resumeExpected.getUuid()));
-    }
-
-    protected static Resume setCompletedResume(String uuid, String name) {
-        Resume resume = new Resume(uuid, name);
-
-        //Контакты
-        resume.addContact(ContactType.PHONE, new Contact("+7(921) 855-0482"));
-        resume.addContact(ContactType.SKYPE, new Contact("skype:grigory.kislin"));
-        resume.addContact(ContactType.EMAIL, new Contact("gkislin@yandex.ru"));
-        resume.addContact(ContactType.LINKEDIN, new Contact("https://github.com/gkislin"));
-
-        //Позиция
-        resume.addSection(SectionType.POSITION, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web и Enterprise технологиям"));
-        //Личные качества
-        resume.addSection(SectionType.PERSONAL, new TextSection("Аналитический склад ума, сильная" + " логика, креативность, инициативность. Пурист кода и архитектуры."));
-
-        //Достижения
-        List<String> achievements = new ArrayList<>();
-        achievements.add("Организация команды и успешная реализация Java проектов");
-        achievements.add("Реализация двухфакторной аутентификации для онлайн платформы");
-        achievements.add("Реализация c нуля Rich Internet Application приложения на стеке технологий JPA");
-        resume.addSection(SectionType.ACHIEVEMENT, new ListTextSection(achievements));
-
-        List<String> qualifications = new ArrayList<>();
-        qualifications.add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, " + "WebLogic, WSO2");
-        qualifications.add("Version control: Subversion, Git, Mercury, ClearCase, " + "Perforce");
-        qualifications.add("Languages: Java, Scala, Python/Jython/PL-Python, JavaScript," + " Groovy");
-        qualifications.add("XML/XSD/XSLT, SQL, C/C++, Unix shell scripts");
-        resume.addSection(SectionType.QUALIFICATIONS, new ListTextSection(qualifications));
- /*       //Опыт
-        List<Company> experience = new ArrayList<>();
-
-        experience.add(new Company(
-                Arrays.asList(
-                        new Period(DateUtil.of(2013, Month.OCTOBER),
-                                DateUtil.of(9999, Month.DECEMBER),
-                                "Автор проекта",
-                                "Создание, организация и проведение Java онлайн проектов и стажировок.")),
-                "Java Online Projects", "www.сайт.ru"));
-        experience.add(new Company(
-                Arrays.asList(new Period(DateUtil.of(2014, Month.OCTOBER), DateUtil.of(2016, Month.JANUARY),
-                        "Старший разработчик (backend)",
-                        "Проектирование и разработка онлайн платформы управления проектами Wrike " +
-                                "(Java 8 API, Maven, Spring, MyBatis, Guava, Vaadin, PostgreSQL, " +
-                                "Redis). Двухфакторная аутентификация, авторизация по OAuth1, " +
-                                "OAuth2, JWT SSO.")),
-                "Wrike",
-                "www.сайт.ru"));
-        experience.add(new Company(
-                Arrays.asList(
-                        new Period(DateUtil.of(2012, Month.APRIL), DateUtil.of(2014, Month.OCTOBER),
-                                "Java архитектор",
-                                "Организация процесса разработки системы ERP для разных окружений: " +
-                                        "реализная политика, версионирование, ведение CI " +
-                                        "(Jenkins)")),
-                "RIT Center",
-                "www.сайт.ru"));
-        resume.addSection(SectionType.EXPERIENCE, new CompanySection(experience));
-        //Образование
-        List<Company> education = new ArrayList<>();
-        education.add(new Company(
-                Arrays.asList(new Period(DateUtil.of(2013, Month.MARCH), DateUtil.of(2013, Month.MAY),
-                        "Coursera", "'Functional Programming Principles in Scala' by Martin Odersky")),
-                "Coursera", "www.сайт.ru"));
-        education.add(new Company(
-                Arrays.asList(new Period(DateUtil.of(2011, Month.MARCH), DateUtil.of(2011, Month.APRIL),
-                        "Luxoft",
-                        "Курс 'Объектно-ориентированный анализ ИС. Концептуальное моделирование на UML.")),
-                "Luxoft",
-                "www.сайт.ru"));
-        education.add(new Company(
-                Arrays.asList(new Period(DateUtil.of(2005, Month.JANUARY), DateUtil.of(2005, Month.APRIL),
-                        "Siemens AG",
-                        "3 месяца обучения мобильным IN сетям (Берлин)")),
-                "Siemens AG", "www.сайт.ru"));
-        education.add(new Company(
-                Arrays.asList(new Period(DateUtil.of(2005, Month.JANUARY), DateUtil.of(2005, Month.APRIL),
-                        "Alcatel", "6 месяцев обучения цифровым телефонным сетям (Москва)")),
-                "Alcatel",
-                "www.сайт.ru"));
-        education.add(new Company(
-                Arrays.asList(new Period(DateUtil.of(1993, Month.SEPTEMBER), DateUtil.of(1996, Month.JULY),
-                                "Санкт-Петербургский национальный исследовательский университет",
-                                "Аспирантура (программист С, С++)"),
-                        new Period(DateUtil.of(1987, Month.SEPTEMBER), DateUtil.of(1993, Month.JULY),
-                                "Санкт-Петербургский национальный исследовательский университет",
-                                "Инженер (программист Fortran, C)")), "Санкт-Петербургский национальный исследовательский университет",
-                "www.сайт.ru"));
-        resume.addSection(SectionType.EDUCATION, new CompanySection(education));
-*/
-        return resume;
     }
 }

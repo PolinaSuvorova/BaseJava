@@ -1,6 +1,6 @@
 package com.urise.webapp.model;
 
-import java.util.Collection;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -13,8 +13,12 @@ public class ListTextSection extends AbstractSection {
     public ListTextSection() {
     }
 
-    public ListTextSection(List<String> textSections) {
+    public ListTextSection(String... items) {
+        this.textSections = Arrays.asList(items);
+    }
 
+    public ListTextSection(List<String> textSections) {
+        Objects.requireNonNull(textSections, "items must not be null");
         this.textSections = textSections;
     }
 
@@ -24,13 +28,7 @@ public class ListTextSection extends AbstractSection {
 
     @Override
     public String toString() {
-        StringBuilder text = new StringBuilder();
-        Collection<String> collection = textSections;
-        for (String str : collection) {
-            text.append("\n");
-            text.append(str);
-        }
-        return text.toString();
+        return textSections.toString();
     }
 
     @Override

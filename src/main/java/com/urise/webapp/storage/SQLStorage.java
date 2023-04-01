@@ -143,18 +143,17 @@ public class SQLStorage implements Storage {
                             ListTextSection textListSection = (ListTextSection) r.getSection(sectionType);
                             ps.setString(1, uuid);
                             ps.setString(2, sectTy);
-                            StringBuilder textInSection = new StringBuilder();
+                            String textInSection = "";
                             List<String> textSections = textListSection.getTextSections();
                             for (int i = 0; i < textSections.size(); i++) {
                                 String text = textSections.get(i);
                                 if (i == 1) {
-                                    textInSection.append(text);
+                                    textInSection = text;
                                 } else {
-                                    textInSection.append("\n");
-                                    textInSection.append(text);
+                                    String.join("\n",textInSection,text);
                                 }
                             }
-                            ps.setString(3, textInSection.toString());
+                            ps.setString(3, textInSection);
                             ps.addBatch();
                             break;
                         }
@@ -255,20 +254,22 @@ public class SQLStorage implements Storage {
     private void addSection(ResultSet rs, Resume r) throws SQLException {
         SectionType sectionType = SectionType.valueOf(rs.getString("type"));
         AbstractSection aSection;
-        switch (sectionType) {
-            case POSITION, PERSONAL -> {
-                aSection = new TextSection(rs.getString("text"));
-                r.addSection(sectionType, aSection);
+        String text = rs.getString("text");
+        if ( text != null) {
+            switch (sectionType) {
+                case POSITION, PERSONAL -> {
+                    aSection = new TextSection(text);
+                    r.addSection(sectionType, aSection);
+                }
+                case ACHIEVEMENT, QUALIFICATIONS -> {
+                    ArrayList<String> listString = new ArrayList<>();
+                    String[] lines = text.split("\n", 0);
+                    Collections.addAll(listString, lines);
+                    aSection = new ListTextSection(listString);
+                    r.addSection(sectionType, aSection);
+                }
+                case EXPERIENCE, EDUCATION -> throw new IllegalStateException("Unexpected value: " + sectionType);
             }
-            case ACHIEVEMENT, QUALIFICATIONS -> {
-                ArrayList<String> listString = new ArrayList<>();
-                String allTexts = rs.getString("text");
-                String[] lines = allTexts.split("\n", 0);
-                Collections.addAll(listString, lines);
-                aSection = new ListTextSection(listString);
-                r.addSection(sectionType, aSection);
-            }
-            case EXPERIENCE, EDUCATION -> throw new IllegalStateException("Unexpected value: " + sectionType);
         }
     }
 }
