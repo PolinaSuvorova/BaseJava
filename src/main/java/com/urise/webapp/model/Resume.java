@@ -55,7 +55,7 @@ public class Resume implements Comparable<Resume>, Serializable {
         if (contacts.containsKey(contactType)) {
             return contacts.get(contactType);
         }
-        throw new RuntimeException();
+        return null;
     }
 
     public Map<ContactType, Contact> getContacts() {
@@ -99,6 +99,10 @@ public class Resume implements Comparable<Resume>, Serializable {
     public int compareTo(Resume o) {
         int resCompare = fullName.compareTo(o.fullName);
         return resCompare != 0 ? resCompare : uuid.compareTo(o.uuid);
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
     }
 }
 
