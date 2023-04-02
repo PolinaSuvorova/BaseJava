@@ -12,6 +12,11 @@ public class SQLStorage implements Storage {
     public SqlHelper sqlHelper;
 
     public SQLStorage(String dbURL, String dbUser, String dbPassword) {
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
         this.sqlHelper = new SqlHelper(() -> {
             // DriverManager подходит для создания соединения с БД при работе
             // с тестовыми приложениями. для реальных приложений делается пул соединений

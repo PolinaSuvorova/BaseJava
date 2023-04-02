@@ -11,7 +11,8 @@ import java.util.Properties;
 
 public class Config {
     private static final Config INSTANCE = new Config();
-    protected File PROPS = new File("C:\\Users\\ptatara\\basejava\\config\\resumes.properties");
+    private static File PROPS = new File(getHomeDir(), "config\\resumes.properties");
+    //protected File PROPS = new File("C:\\Users\\ptatara\\basejava\\config\\resumes.properties");
     private final Properties props = new Properties();
     private final File storageDir;
     private final Storage sqlStorage;
@@ -21,6 +22,7 @@ public class Config {
     }
 
     private Config() {
+        PROPS = new File(getHomeDir(), "config\\resumes.properties");
         try (InputStream is = new FileInputStream(PROPS)) {
             props.load(is);
             storageDir = new File(props.getProperty("storage.dir"));
@@ -43,5 +45,14 @@ public class Config {
 
     public File getStorageDir() {
         return storageDir;
+    }
+
+    private static File getHomeDir() {
+        String prop = System.getProperty("homeDir");
+        File homeDir = new File(prop == null ? "." : prop);
+        if (!homeDir.isDirectory()) {
+            throw new IllegalStateException(homeDir + " is not directory");
+        }
+        return homeDir;
     }
 }
