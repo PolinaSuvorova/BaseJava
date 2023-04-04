@@ -37,7 +37,7 @@
         </c:forEach>
     </table>
     <hr>
-    <a href="resume?&action=edit"><img src="img/add.png"></a>
+    <a href="resume?&action=edit"><img src="img/add.png">Создать резюме</a>
 
 </section>
 <jsp:include page="fragments/footer.jsp"/>

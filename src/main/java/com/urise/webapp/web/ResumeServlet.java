@@ -1,5 +1,6 @@
 package com.urise.webapp.web;
 
+import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
 import com.urise.webapp.util.Config;
@@ -44,7 +45,11 @@ public class ResumeServlet extends HttpServlet {
                 r = storage.get(uuid);
                 break;
             case "edit":
-                r = storage.get(uuid);
+                if (uuid == null) {
+                    r = new Resume("","");
+                } else {
+                    r = storage.get(uuid);
+                }
                 break;
             default:
                 throw new IllegalArgumentException("Action " + action + " is illegal");
@@ -62,23 +67,20 @@ public class ResumeServlet extends HttpServlet {
 
         String action = request.getParameter("action");
         String status = request.getParameter("status");
-        if ( action != null && action.equals("back")) {
+        if (action != null && action.equals("back")) {
             response.sendRedirect("resume");
             return;
         }
 
         Resume r;
+        boolean isNew = false;
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        if ( uuid.isEmpty() ){
-           if (!fullName.isEmpty()){
-               r = new Resume(fullName);
-           }else{
-               response.sendRedirect("resume");
-               return;
-           }
-        } else {
-          r = storage.get(uuid);
+        try {
+            r = storage.get(uuid);
+        }catch (NotExistStorageException er){
+            r = new Resume( fullName );
+            isNew = true;
         }
 
         r.setFullName(fullName);
@@ -120,7 +122,9 @@ public class ResumeServlet extends HttpServlet {
                                 String[] endDates = request.getParameterValues(line + "endDate");
                                 String[] titles = request.getParameterValues(line + "title");
                                 String[] descriptions = request.getParameterValues(line + "description");
-                                if ( titles == null ) { continue; }
+                                if (titles == null) {
+                                    continue;
+                                }
                                 for (int j = 0; j < titles.length; j++) {
                                     if (!UtilsResume.isEmpty(titles[j])) {
                                         periods.add(
@@ -147,7 +151,11 @@ public class ResumeServlet extends HttpServlet {
 
         List<String> validate = validate(request);
         if (validate.isEmpty() && !status.isEmpty() && status.equals("save")) {
-            storage.update(r.getUuid(), r);
+            if (isNew){
+                storage.save(r);
+            }else {
+                storage.update(r.getUuid(), r);
+            }
             response.sendRedirect("resume");
         } else {
             request.setAttribute("status", "");
@@ -195,12 +203,12 @@ public class ResumeServlet extends HttpServlet {
                             continue;
                         } else if (!UtilsResume.isEmpty(name) &&
                                 (startDates == null ||
-                                 endDates == null ||
-                                 titles == null)) {
+                                        endDates == null ||
+                                        titles == null)) {
                             violations.add("Для секции " + type.name() + " " + name + " период и описание обязательны");
                             continue;
                         }
-                        if ( titles == null ){
+                        if (titles == null) {
                             continue;
                         }
                         for (int j = 0; j < titles.length; j++) {
