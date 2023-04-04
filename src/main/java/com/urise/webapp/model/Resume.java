@@ -24,12 +24,14 @@ public class Resume implements Comparable<Resume>, Serializable {
 
     public Resume() {
     }
-
     public Resume(String uuid, String fullName) {
         Objects.requireNonNull(uuid, " Resume.uuid must not be null");
         Objects.requireNonNull(fullName, " Resume.fullName must not be null");
         this.uuid = uuid;
         this.fullName = fullName;
+    }
+    public Resume(String fullName) {
+        this( UUID.randomUUID().toString(), fullName);
     }
 
     public void addContact(ContactType contactType, Contact contact) {
@@ -51,19 +53,15 @@ public class Resume implements Comparable<Resume>, Serializable {
         return sections;
     }
 
-    public Contact getContact(ContactType contactType) {
+    public String getContact(ContactType contactType) {
         if (contacts.containsKey(contactType)) {
-            return contacts.get(contactType);
+            return contacts.get(contactType).getText();
         }
-        return null;
+        return "";
     }
 
     public Map<ContactType, Contact> getContacts() {
         return contacts;
-    }
-
-    public Resume(String uuid) {
-        this(uuid, "Any_Full_Name" + UUID.randomUUID());
     }
 
     public String getFullName() {
@@ -102,6 +100,7 @@ public class Resume implements Comparable<Resume>, Serializable {
     }
 
     public void setFullName(String fullName) {
+        Objects.requireNonNull(fullName, " Resume.fullName must not be null");
         this.fullName = fullName;
     }
 }

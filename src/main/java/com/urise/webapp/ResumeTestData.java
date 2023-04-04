@@ -147,7 +147,7 @@ public class ResumeTestData {
         System.out.println("Контакты");
         for (ContactType infoContact : EnumSet.allOf(ContactType.class)) {
             try {
-                Contact contact = resume.getContact(infoContact);
+                String contact = resume.getContact(infoContact);
                 System.out.println(infoContact.getTitle() + ": " + contact);
             } catch (RuntimeException reex) {
             }

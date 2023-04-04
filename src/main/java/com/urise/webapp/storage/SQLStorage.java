@@ -139,6 +139,7 @@ public class SQLStorage implements Storage {
                     switch (sectionType) {
                         case POSITION, PERSONAL:
                             TextSection textSection = (TextSection) r.getSection(sectionType);
+                            if ( textSection == null ) { throw new RuntimeException(); }
                             ps.setString(1, uuid);
                             ps.setString(2, sectTy);
                             ps.setString(3, textSection.getDescription());
@@ -146,19 +147,11 @@ public class SQLStorage implements Storage {
                             break;
                         case ACHIEVEMENT, QUALIFICATIONS: {
                             ListTextSection textListSection = (ListTextSection) r.getSection(sectionType);
+                            if ( textListSection == null ) { throw new RuntimeException(); }
                             ps.setString(1, uuid);
                             ps.setString(2, sectTy);
-                            String textInSection = "";
-                            List<String> textSections = textListSection.getTextSections();
-                            for (int i = 0; i < textSections.size(); i++) {
-                                String text = textSections.get(i);
-                                if (i == 1) {
-                                    textInSection = text;
-                                } else {
-                                    String.join("\n",textInSection,text);
-                                }
-                            }
-                            ps.setString(3, textInSection);
+                            ps.setString(3, String.join("\n",
+                                          textListSection.getTextSections()));
                             ps.addBatch();
                             break;
                         }

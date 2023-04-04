@@ -1,10 +1,10 @@
 package com.urise.webapp.web;
 
-import com.urise.webapp.model.Contact;
-import com.urise.webapp.model.ContactType;
-import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
 import com.urise.webapp.util.Config;
+import com.urise.webapp.util.DateUtil;
+import com.urise.webapp.util.UtilsResume;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -19,8 +22,9 @@ public class ResumeServlet extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        storage =  Config.getInstance().getSqlStorage();
+        storage = Config.getInstance().getSqlStorage();
     }
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String uuid = request.getParameter("uuid");
@@ -38,6 +42,7 @@ public class ResumeServlet extends HttpServlet {
                 return;
             case "view":
                 r = storage.get(uuid);
+                break;
             case "edit":
                 r = storage.get(uuid);
                 break;
@@ -48,12 +53,20 @@ public class ResumeServlet extends HttpServlet {
         request.getRequestDispatcher(
                 ("view".equals(action) ? "/WEB-INF/jsp/view.jsp" : "/WEB-INF/jsp/edit.jsp")
         ).forward(request, response);
-
-
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        System.out.println("Inside getNewMessage");
+        String action = request.getParameter("action");
+        String status = request.getParameter("status");
+
+        if (action.equals("back")) {
+            response.sendRedirect("resume");
+            return;
+        }
+
         request.setCharacterEncoding("UTF-8");
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
@@ -61,13 +74,75 @@ public class ResumeServlet extends HttpServlet {
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
-            if (value != null && value.trim().length() != 0) {
+            if (!UtilsResume.isEmpty(value)) {
                 r.addContact(type, new Contact(value));
             } else {
                 r.getContacts().remove(type);
             }
         }
-        storage.update(r.getUuid(),r);
+        for (SectionType type : SectionType.values()) {
+            String valueSection = request.getParameter(type.name());
+            String[] valuesSection = request.getParameterValues(type.name());
+            AbstractSection aSection = null;
+            if (valueSection != null && valueSection.trim().length() != 0) {
+                switch (type) {
+                    case PERSONAL, POSITION -> {
+                        aSection = new TextSection(valueSection);
+                        r.addSection(type, new TextSection(valueSection));
+                        break;
+                    }
+                    case ACHIEVEMENT, QUALIFICATIONS -> {
+                        ArrayList<String> listString = new ArrayList<>();
+                        String[] lines = valueSection.split("\n", 0);
+                        Collections.addAll(listString, lines);
+                        aSection = new ListTextSection(listString);
+                        break;
+                    }
+                    case EXPERIENCE, EDUCATION -> {
+                        List<Company> comp = new ArrayList<>();
+                        String[] urls = request.getParameterValues(type.name() + "url");
+                        for (int i = 0; i < valuesSection.length; i++) {
+                            String name = valuesSection[i];
+                            if (!UtilsResume.isEmpty(name)) {
+                                List<Period> periods = new ArrayList<>();
+                                String line = type.name() + i;
+                                String[] startDates = request.getParameterValues(line + "startDate");
+                                String[] endDates = request.getParameterValues(line + "endDate");
+                                String[] titles = request.getParameterValues(line + "title");
+                                String[] descriptions = request.getParameterValues(line + "description");
+                                for (int j = 0; j < titles.length; j++) {
+                                    if (!UtilsResume.isEmpty(titles[j])) {
+                                        periods.add(
+                                                new Period(
+                                                        DateUtil.inputDate(startDates[j]),
+                                                        DateUtil.inputDate(endDates[j]),
+                                                        titles[j],
+                                                        descriptions[j]));
+                                    }
+                                }
+                                comp.add(new Company(periods, name, urls[i]));
+                            }
+                        }
+                    }
+                }
+
+                if (aSection != null) {
+                    r.addSection(type, aSection);
+                }
+            } else {
+                r.getSections().remove(type);
+            }
+        }
+
+        if (!action.equals("save")) {
+            request.setAttribute("status", "");
+            request.setAttribute("resume", r);
+            request.setAttribute("action", "");
+            request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")
+                    .forward(request, response);
+            return;
+        }
+        storage.update(r.getUuid(), r);
         response.sendRedirect("resume");
     }
 }
