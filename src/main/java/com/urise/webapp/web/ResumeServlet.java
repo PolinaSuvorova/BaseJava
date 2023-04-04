@@ -58,7 +58,7 @@ public class ResumeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        System.out.println("Inside getNewMessage");
+
         String action = request.getParameter("action");
         String status = request.getParameter("status");
 
@@ -110,6 +110,7 @@ public class ResumeServlet extends HttpServlet {
                                 String[] endDates = request.getParameterValues(line + "endDate");
                                 String[] titles = request.getParameterValues(line + "title");
                                 String[] descriptions = request.getParameterValues(line + "description");
+                                if ( titles == null ) { continue; }
                                 for (int j = 0; j < titles.length; j++) {
                                     if (!UtilsResume.isEmpty(titles[j])) {
                                         periods.add(
@@ -142,7 +143,89 @@ public class ResumeServlet extends HttpServlet {
                     .forward(request, response);
             return;
         }
-        storage.update(r.getUuid(), r);
-        response.sendRedirect("resume");
+
+        List<String> validate = validate(request);
+        if (validate.isEmpty()) {
+            storage.update(r.getUuid(), r);
+            response.sendRedirect("resume");
+            return;
+        } else {
+            request.setAttribute("status", "");
+            request.setAttribute("resume", r);
+            request.setAttribute("action", "");
+
+            request.setAttribute("validate", validate);
+            request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")
+                    .forward(request, response);
+            return;
+        }
+    }
+
+    public List<String> validate(HttpServletRequest request) {
+        String fullName = request.getParameter("fullName");
+        List violations = new ArrayList<>();
+        if (UtilsResume.isEmpty(fullName)) {
+            violations.add("ФИО обязательно для ввода");
+        }
+
+        for (SectionType type : SectionType.values()) {
+            String valueSection = request.getParameter(type.name());
+            String[] valuesSection = request.getParameterValues(type.name());
+            AbstractSection aSection = null;
+            switch (type) {
+                case POSITION -> {
+                    if (UtilsResume.isEmpty(valueSection)) {
+                        violations.add("Позиция обязательна для ввода");
+                    }
+                }
+                case EXPERIENCE, EDUCATION -> {
+                    List<Company> comp = new ArrayList<>();
+                    String[] urls = request.getParameterValues(type.name() + "url");
+                    for (int i = 0; i < valuesSection.length; i++) {
+                        String name = valuesSection[i];
+                        String line = type.name() + i;
+                        String[] startDates = request.getParameterValues(line + "startDate");
+                        String[] endDates = request.getParameterValues(line + "endDate");
+                        String[] titles = request.getParameterValues(line + "title");
+                        String[] descriptions = request.getParameterValues(line + "description");
+
+                        if (UtilsResume.isEmpty(name) &&
+                                (startDates != null ||
+                                        endDates != null ||
+                                        titles != null ||
+                                        descriptions != null)) {
+                            violations.add("Для секции " + type.name() + " Название компании обязательно ");
+                            continue;
+                        } else if (!UtilsResume.isEmpty(name) &&
+                                (startDates == null ||
+                                 endDates == null ||
+                                 titles == null)) {
+                            violations.add("Для секции " + type.name() + " " + name + " период и описание обязательны");
+                            continue;
+                        }
+                        if ( titles == null ){
+                            continue;
+                        }
+                        for (int j = 0; j < titles.length; j++) {
+                            if (!UtilsResume.isEmpty(titles[j])) {
+                                if (UtilsResume.isEmpty(startDates[j])) {
+                                    violations.add("Для секции " + type.name() + " " + name + " введите дату начала");
+                                    continue;
+                                }
+                                if (UtilsResume.isEmpty(endDates[j])) {
+                                    violations.add("Для секции " + type.name() + " " + name + " введите дату окончания");
+                                    continue;
+                                }
+                                if (UtilsResume.isEmpty(descriptions[j])) {
+                                    violations.add("Для секции " + type.name() + " " + name + " введите описание");
+                                    continue;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return violations;
     }
 }

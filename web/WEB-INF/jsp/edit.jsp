@@ -4,6 +4,8 @@
 <%@ page import="com.urise.webapp.model.CompanySection" %>
 <%@ page import="com.urise.webapp.model.TextSection" %>
 <%@ page import="com.urise.webapp.util.UtilsResume" %>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html>
@@ -16,6 +18,11 @@
 <body>
 <jsp:include page="fragments/header.jsp"/>
 <section>
+    <c:if test="${validate != null}">
+        <c:forEach  var="valueerror" items="${validate}">
+            <p>${valueerror}.</p>
+        </c:forEach>
+    </c:if>
     <form name='theForm' method="post" action="resume" enctype="application/x-www-form-urlencoded">
         <input type="hidden" name="uuid" value="${resume.uuid}">
         <h1>Имя:</h1>
@@ -49,7 +56,7 @@
                         <c:when test="${type=='POSITION'}">
                             <input type='text' name='${type}'
                                    size=75
-                                   required="true"
+
                                    value='<%=((TextSection) section).getDescription()%>' >
                         </c:when>
                         <c:when test="${type=='PERSONAL'}">
@@ -114,7 +121,7 @@
                             <input type='text' name='${type}'
                                    size=75
                                    value=''
-                                   required="true">
+                                   >
                         </c:when>
                         <c:when test="${type=='PERSONAL' || type=='QUALIFICATIONS' || type=='ACHIEVEMENT'}">
                           <textarea name='${type}' cols=75
