@@ -6,8 +6,7 @@ public enum SectionType {
     QUALIFICATIONS("Квалификация"),
     EXPERIENCE("Опыт работы"),
     EDUCATION("Образование"),
-    POSITION("Позиция"),
-    EMPTY("Заглушка");
+    POSITION("Позиция");
     private String title;
 
     SectionType(String title) {

@@ -20,7 +20,7 @@
 <section>
     <c:if test="${validate != null}">
         <c:forEach  var="valueerror" items="${validate}">
-            <p>${valueerror}.</p>
+            <p style="background-color:tomato;">${valueerror}.</p>
         </c:forEach>
     </c:if>
     <form name='theForm' method="post" action="resume" enctype="application/x-www-form-urlencoded">
