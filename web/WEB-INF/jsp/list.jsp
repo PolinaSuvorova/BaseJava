@@ -36,6 +36,9 @@
             </tr>
         </c:forEach>
     </table>
+    <hr>
+    <a href="resume?&action=edit"><img src="img/add.png"></a>
+
 </section>
 <jsp:include page="fragments/footer.jsp"/>
 </body>

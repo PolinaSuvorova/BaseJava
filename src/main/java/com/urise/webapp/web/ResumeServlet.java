@@ -58,19 +58,29 @@ public class ResumeServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
 
         String action = request.getParameter("action");
         String status = request.getParameter("status");
-
-        if (action.equals("back")) {
+        if ( action != null && action.equals("back")) {
             response.sendRedirect("resume");
             return;
         }
 
-        request.setCharacterEncoding("UTF-8");
+        Resume r;
         String uuid = request.getParameter("uuid");
         String fullName = request.getParameter("fullName");
-        Resume r = storage.get(uuid);
+        if ( uuid.isEmpty() ){
+           if (!fullName.isEmpty()){
+               r = new Resume(fullName);
+           }else{
+               response.sendRedirect("resume");
+               return;
+           }
+        } else {
+          r = storage.get(uuid);
+        }
+
         r.setFullName(fullName);
         for (ContactType type : ContactType.values()) {
             String value = request.getParameter(type.name());
@@ -135,29 +145,16 @@ public class ResumeServlet extends HttpServlet {
             }
         }
 
-        if (!action.equals("save")) {
-            request.setAttribute("status", "");
-            request.setAttribute("resume", r);
-            request.setAttribute("action", "");
-            request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")
-                    .forward(request, response);
-            return;
-        }
-
         List<String> validate = validate(request);
-        if (validate.isEmpty()) {
+        if (validate.isEmpty() && !status.isEmpty() && status.equals("save")) {
             storage.update(r.getUuid(), r);
             response.sendRedirect("resume");
-            return;
         } else {
             request.setAttribute("status", "");
             request.setAttribute("resume", r);
-            request.setAttribute("action", "");
-
             request.setAttribute("validate", validate);
             request.getRequestDispatcher("/WEB-INF/jsp/edit.jsp")
                     .forward(request, response);
-            return;
         }
     }
 

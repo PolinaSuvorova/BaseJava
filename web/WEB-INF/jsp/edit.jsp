@@ -170,9 +170,9 @@
                 </c:otherwise>
             </c:choose>
         </c:forEach>
-
-        <button name="action" value="save" onclick='setVal("save")' >Сохранить</button>
-        <button onclick="window.history.go(-1)" name="action" value="back" >Отменить</button>
+        <hr>
+        <button type="button" name="action" value="save" onclick='setVal("save")' >Сохранить</button>
+        <button type="button" onclick="window.history.go(-1)" name="action" value="back" >Отменить</button>
             <input type="hidden" name='status'>
 
     </form>
