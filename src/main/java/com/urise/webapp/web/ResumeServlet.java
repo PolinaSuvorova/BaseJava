@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -37,22 +38,20 @@ public class ResumeServlet extends HttpServlet {
         }
         Resume r;
         switch (action) {
-            case "delete":
+            case "delete" -> {
                 storage.delete(uuid);
                 response.sendRedirect("resume");
                 return;
-            case "view":
-                r = storage.get(uuid);
-                break;
-            case "edit":
+            }
+            case "view" -> r = storage.get(uuid);
+            case "edit" -> {
                 if (uuid == null) {
-                    r = new Resume("","");
+                    r = new Resume("", "");
                 } else {
                     r = storage.get(uuid);
                 }
-                break;
-            default:
-                throw new IllegalArgumentException("Action " + action + " is illegal");
+            }
+            default -> throw new IllegalArgumentException("Action " + action + " is illegal");
         }
         request.setAttribute("resume", r);
         request.getRequestDispatcher(
@@ -101,18 +100,18 @@ public class ResumeServlet extends HttpServlet {
                     case PERSONAL, POSITION -> {
                         aSection = new TextSection(valueSection);
                         r.addSection(type, new TextSection(valueSection));
-                        break;
-                    }
+                     }
                     case ACHIEVEMENT, QUALIFICATIONS -> {
                         ArrayList<String> listString = new ArrayList<>();
                         String[] lines = valueSection.split("\n", 0);
                         Collections.addAll(listString, lines);
+                        listString.removeAll(Arrays.asList("", null));
                         aSection = new ListTextSection(listString);
-                        break;
                     }
                     case EXPERIENCE, EDUCATION -> {
                         List<Company> comp = new ArrayList<>();
                         String[] urls = request.getParameterValues(type.name() + "url");
+
                         for (int i = 0; i < valuesSection.length; i++) {
                             String name = valuesSection[i];
                             if (!UtilsResume.isEmpty(name)) {
@@ -137,13 +136,16 @@ public class ResumeServlet extends HttpServlet {
                                 }
                                 comp.add(new Company(periods, name, urls[i]));
                             }
+
                         }
+                        aSection = new CompanySection(comp);
                     }
                 }
 
                 if (aSection != null) {
                     r.addSection(type, aSection);
                 }
+
             } else {
                 r.getSections().remove(type);
             }
@@ -168,7 +170,7 @@ public class ResumeServlet extends HttpServlet {
 
     public List<String> validate(HttpServletRequest request) {
         String fullName = request.getParameter("fullName");
-        List violations = new ArrayList<>();
+        List<String> violations = new ArrayList<>();
         if (UtilsResume.isEmpty(fullName)) {
             violations.add("ФИО обязательно для ввода");
         }
@@ -176,7 +178,6 @@ public class ResumeServlet extends HttpServlet {
         for (SectionType type : SectionType.values()) {
             String valueSection = request.getParameter(type.name());
             String[] valuesSection = request.getParameterValues(type.name());
-            AbstractSection aSection = null;
             switch (type) {
                 case POSITION -> {
                     if (UtilsResume.isEmpty(valueSection)) {
@@ -184,8 +185,6 @@ public class ResumeServlet extends HttpServlet {
                     }
                 }
                 case EXPERIENCE, EDUCATION -> {
-                    List<Company> comp = new ArrayList<>();
-                    String[] urls = request.getParameterValues(type.name() + "url");
                     for (int i = 0; i < valuesSection.length; i++) {
                         String name = valuesSection[i];
                         String line = type.name() + i;

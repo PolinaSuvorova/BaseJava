@@ -10,20 +10,15 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
+
+    private static final File PROPS = new File(getHomeDir(), "config\\resumes.properties");
     private static final Config INSTANCE = new Config();
-    private static File PROPS = new File(getHomeDir(), "config\\resumes.properties");
-    //protected File PROPS = new File("C:\\Users\\ptatara\\basejava\\config\\resumes.properties");
-    private final Properties props = new Properties();
     private final File storageDir;
     private final Storage sqlStorage;
 
-    public static Config getInstance() {
-        return INSTANCE;
-    }
-
     private Config() {
-        PROPS = new File(getHomeDir(), "config\\resumes.properties");
         try (InputStream is = new FileInputStream(PROPS)) {
+            Properties props = new Properties();
             props.load(is);
             storageDir = new File(props.getProperty("storage.dir"));
             sqlStorage = new SQLStorage(
@@ -35,12 +30,12 @@ public class Config {
         }
     }
 
-    public Storage getSqlStorage() {
-        return sqlStorage;
+    public static Config getInstance() {
+        return INSTANCE;
     }
 
-    public String getProperty(String nameProperty) {
-        return props.getProperty(nameProperty);
+    public Storage getSqlStorage() {
+        return sqlStorage;
     }
 
     public File getStorageDir() {

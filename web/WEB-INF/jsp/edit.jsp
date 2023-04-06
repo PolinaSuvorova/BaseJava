@@ -30,8 +30,10 @@
                    name="fullName"
                    required="true"
                    size=55
-                   value="${resume.fullName}">
-        </dl>
+                   pattern="[А-Яа-яЁё]{1,40} [А-Яа-яЁё]{1,40} [А-Яа-яЁё]{0,40}"
+                   value="${resume.fullName}"
+                   >
+           </dl>
         <h2>Контакты:</h2>
         <c:forEach var="type" items="<%=ContactType.values()%>">
             <dl>
