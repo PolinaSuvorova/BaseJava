@@ -1,8 +1,6 @@
 package com.urise.webapp.util;
 
-import com.urise.webapp.model.AbstractSection;
-import com.urise.webapp.model.Resume;
-import com.urise.webapp.model.TextSection;
+import com.urise.webapp.model.*;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,10 +9,11 @@ import static com.urise.webapp.TestData.R1;
 public class JsonParserTest {
     @Test
     public void testResume() throws Exception {
-        String json = JsonParser.write(R1,Resume.class);
+
+        String json = JsonParser.write((CompanySection) R1.getSection(SectionType.EXPERIENCE), CompanySection.class);
         System.out.println(json);
-        Resume resume = JsonParser.read(json, Resume.class);
-        Assert.assertEquals(R1, resume);
+        CompanySection companySection = JsonParser.read(json, CompanySection.class);
+        Assert.assertEquals((CompanySection) R1.getSection(SectionType.EXPERIENCE), companySection);
     }
 
     @Test

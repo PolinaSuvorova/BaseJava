@@ -3,6 +3,7 @@ package com.urise.webapp.storage;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.sql.SqlHelper;
+import com.urise.webapp.util.JsonParser;
 
 import java.sql.*;
 import java.util.*;
@@ -136,33 +137,34 @@ public class SQLStorage implements Storage {
             for (SectionType sectionType : EnumSet.allOf(SectionType.class)) {
                 String sectTy = String.valueOf(sectionType);
                 try {
+                    AbstractSection section = r.getSection(sectionType);
+                    String sectionAsString = null;
                     switch (sectionType) {
-                        case POSITION, PERSONAL:
-                            TextSection textSection = (TextSection) r.getSection(sectionType);
-                            if ( textSection == null ) { throw new RuntimeException(); }
-                            ps.setString(1, uuid);
-                            ps.setString(2, sectTy);
-                            ps.setString(3, textSection.getDescription());
-                            ps.addBatch();
-                            break;
-                        case ACHIEVEMENT, QUALIFICATIONS: {
-                            ListTextSection textListSection = (ListTextSection) r.getSection(sectionType);
-                            if ( textListSection == null ) { throw new RuntimeException(); }
-                            ps.setString(1, uuid);
-                            ps.setString(2, sectTy);
-                            ps.setString(3, String.join("\n",
-                                          textListSection.getTextSections()));
-                            ps.addBatch();
-                            break;
+                        case POSITION, PERSONAL -> {
+                            TextSection textSection = (TextSection) section;
+                            sectionAsString = textSection.getDescription();
                         }
-                        case EXPERIENCE, EDUCATION:
-
+                        case ACHIEVEMENT, QUALIFICATIONS -> {
+                            ListTextSection textListSection = (ListTextSection) section;
+                            sectionAsString = String.join("\n",
+                                    textListSection.getTextSections());
+                        }
+                        case EXPERIENCE, EDUCATION -> {
+                            CompanySection companySection = (CompanySection) section;
+                            sectionAsString = JsonParser.write(companySection, CompanySection.class);
+                        }
                     }
-                } catch (RuntimeException reex) {
+                    if (sectionAsString != null && !sectionAsString.isEmpty()) {
+                        ps.setString(1, uuid);
+                        ps.setString(2, sectTy);
+                        ps.setString(3, sectionAsString);
+                        ps.addBatch();
+                    }
+                } catch (RuntimeException err) {
+
                 }
             }
             ps.executeBatch();
-
         }
     }
 
@@ -253,7 +255,7 @@ public class SQLStorage implements Storage {
         SectionType sectionType = SectionType.valueOf(rs.getString("type"));
         AbstractSection aSection;
         String text = rs.getString("text");
-        if ( text != null) {
+        if (text != null) {
             switch (sectionType) {
                 case POSITION, PERSONAL -> {
                     aSection = new TextSection(text);
@@ -266,7 +268,10 @@ public class SQLStorage implements Storage {
                     aSection = new ListTextSection(listString);
                     r.addSection(sectionType, aSection);
                 }
-                case EXPERIENCE, EDUCATION -> throw new IllegalStateException("Unexpected value: " + sectionType);
+                case EXPERIENCE, EDUCATION -> {
+                    CompanySection sect = JsonParser.read(text, CompanySection.class);
+                    r.addSection(sectionType, sect);
+                }
             }
         }
     }

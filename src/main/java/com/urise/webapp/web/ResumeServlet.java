@@ -3,9 +3,7 @@ package com.urise.webapp.web;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.*;
 import com.urise.webapp.storage.Storage;
-import com.urise.webapp.util.Config;
-import com.urise.webapp.util.DateUtil;
-import com.urise.webapp.util.UtilsResume;
+import com.urise.webapp.util.*;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -138,7 +136,9 @@ public class ResumeServlet extends HttpServlet {
                             }
 
                         }
-                        aSection = new CompanySection(comp);
+                        if ( comp != null ) {
+                            aSection = new CompanySection(comp);
+                        }
                     }
                 }
 
