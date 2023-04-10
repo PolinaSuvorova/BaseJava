@@ -3,7 +3,6 @@ package com.urise.webapp;
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.DateUtil;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,7 +41,7 @@ public class TestData {
                 List.of(
                         new Period(
                                 DateUtil.of(2013, Month.OCTOBER),
-                                LocalDate.MAX,
+                                DateUtil.NOW,
                                 "experience1",
                                 "описание 1")),
                 "Java Online Projects",

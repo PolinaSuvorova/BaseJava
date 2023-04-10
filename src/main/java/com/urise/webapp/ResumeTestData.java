@@ -3,7 +3,6 @@ package com.urise.webapp;
 import com.urise.webapp.model.*;
 import com.urise.webapp.util.DateUtil;
 
-import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,7 +50,7 @@ public class ResumeTestData {
                 Arrays.asList(
                         new Period(
                                 DateUtil.of(2013, Month.OCTOBER),
-                                LocalDate.MAX,
+                                DateUtil.NOW,
                                 "Автор проекта",
                                 "Создание, организация и проведение Java онлайн проектов " +
                                         "и стажировок.")),
@@ -152,12 +151,26 @@ public class ResumeTestData {
             } catch (RuntimeException reex) {
             }
         }
+        System.out.println("|||||||||||||||||||||||||||||");
 
         for (SectionType info : EnumSet.allOf(SectionType.class)) {
             try {
                 AbstractSection section = resume.getSection(info);
-                System.out.println(info.getTitle());
-                System.out.println(section);
+                if ("EXPERIENCE" == info.name()) {
+                   CompanySection  osection = (CompanySection) section;
+                    List<Company> lists = osection.getCompanies();
+                    for ( Company c: lists
+                         ) {
+                     List<Period> ps =   c.getPeriods();
+                        for ( Period p: ps
+                             ) {
+                            System.out.println(p.getStartDate() );
+                            System.out.println(DateUtil.outputDate(p.getStartDate()) );   }
+                    }
+                }
+                //System.out.println(info.getTitle());
+                //System.out.println(section);
+
             } catch (RuntimeException reex) {
             }
         }

@@ -88,7 +88,7 @@
                                             <dt>Начальная дата:</dt>
                                             <dd>
                                                 <input type="text" name="${type}${counter.index}startDate" size=10
-                                                       value="<%=DateUtil.outputDate(pos.getStartDate())%>"
+                                                        value="<%=DateUtil.outputDate(pos.getStartDate())%>"
                                                        placeholder="MM/yyyy">
                                             </dd>
                                         </dl>
@@ -110,6 +110,31 @@
                                                           cols=75>${pos.description}</textarea></dd>
                                         </dl>
                                     </c:forEach>
+                                         <dl>
+                                            <dt>Начальная дата:</dt>
+                                            <dd>
+                                                <input type="text" name="${type}${counter.index}startDate" size=10
+                                                       value="<%=DateUtil.outputDate(null)%>"
+                                                       placeholder="MM/yyyy">
+                                            </dd>
+                                        </dl>
+                                        <dl>
+                                            <dt>Конечная дата:</dt>
+                                            <dd>
+                                                <input type="text" name="${type}${counter.index}endDate" size=10
+                                                       value="<%=DateUtil.outputDate(null)%>"
+                                                       placeholder="MM/yyyy">
+                                        </dl>
+                                        <dl>
+                                            <dt>Должность:</dt>
+                                            <dd><input type="text" name='${type}${counter.index}title' size=75
+                                                       value="">
+                                        </dl>
+                                        <dl>
+                                            <dt>Описание:</dt>
+                                            <dd><textarea name="${type}${counter.index}description" rows=5
+                                                          cols=75></textarea></dd>
+                                        </dl>
                                 </div>
                             </c:forEach>
                         </c:when>

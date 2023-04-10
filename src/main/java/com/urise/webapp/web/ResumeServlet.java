@@ -11,10 +11,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 public class ResumeServlet extends HttpServlet {
     private Storage storage;
@@ -75,8 +73,8 @@ public class ResumeServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         try {
             r = storage.get(uuid);
-        }catch (NotExistStorageException er){
-            r = new Resume( fullName );
+        } catch (NotExistStorageException er) {
+            r = new Resume(fullName);
             isNew = true;
         }
 
@@ -98,7 +96,7 @@ public class ResumeServlet extends HttpServlet {
                     case PERSONAL, POSITION -> {
                         aSection = new TextSection(valueSection);
                         r.addSection(type, new TextSection(valueSection));
-                     }
+                    }
                     case ACHIEVEMENT, QUALIFICATIONS -> {
                         ArrayList<String> listString = new ArrayList<>();
                         String[] lines = valueSection.split("\n", 0);
@@ -112,31 +110,45 @@ public class ResumeServlet extends HttpServlet {
 
                         for (int i = 0; i < valuesSection.length; i++) {
                             String name = valuesSection[i];
-                            if (!UtilsResume.isEmpty(name)) {
-                                List<Period> periods = new ArrayList<>();
-                                String line = type.name() + i;
-                                String[] startDates = request.getParameterValues(line + "startDate");
-                                String[] endDates = request.getParameterValues(line + "endDate");
-                                String[] titles = request.getParameterValues(line + "title");
-                                String[] descriptions = request.getParameterValues(line + "description");
-                                if (titles == null) {
-                                    continue;
-                                }
-                                for (int j = 0; j < titles.length; j++) {
-                                    if (!UtilsResume.isEmpty(titles[j])) {
-                                        periods.add(
-                                                new Period(
-                                                        DateUtil.inputDate(startDates[j]),
-                                                        DateUtil.inputDate(endDates[j]),
-                                                        titles[j],
-                                                        descriptions[j]));
-                                    }
-                                }
-                                comp.add(new Company(periods, name, urls[i]));
+                            // if (!UtilsResume.isEmpty(name)) {
+                            List<Period> periods = new ArrayList<>();
+                            String line = type.name() + i;
+                            String[] startDates = request.getParameterValues(line + "startDate");
+                            String[] endDates = request.getParameterValues(line + "endDate");
+                            String[] titles = request.getParameterValues(line + "title");
+                            String[] descriptions = request.getParameterValues(line + "description");
+                            int len = 0;
+                            if (titles != null) {
+                                len = titles.length;
+                            }
+                            if (startDates != null && startDates.length > len) {
+                                len = startDates.length;
+                            }
+                            if (endDates != null && endDates.length > len) {
+                                len = endDates.length;
+                            }
+                            if (descriptions != null && descriptions.length > len) {
+                                len = descriptions.length;
                             }
 
+                            for (int j = 0; j < len; j++) {
+                                //if (!UtilsResume.isEmpty(titles[j])) {
+                                if (!UtilsResume.isEmpty(titles[j]) ||
+                                        !UtilsResume.isEmpty(descriptions[j]) ||
+                                        DateUtil.inputDate(startDates[j]) != DateUtil.MIN ||
+                                        DateUtil.inputDate(endDates[j]) != DateUtil.MIN) {
+                                    periods.add(
+                                            new Period(
+                                                    DateUtil.inputDate(startDates[j]),
+                                                    DateUtil.inputDate(endDates[j]),
+                                                    titles[j],
+                                                    descriptions[j]));
+                                }
+                            }
+                            comp.add(new Company(periods, name, urls[i]));
                         }
-                        if ( comp != null ) {
+
+                        if (comp != null) {
                             aSection = new CompanySection(comp);
                         }
                     }
@@ -153,9 +165,9 @@ public class ResumeServlet extends HttpServlet {
 
         List<String> validate = validate(request);
         if (validate.isEmpty() && !status.isEmpty() && status.equals("save")) {
-            if (isNew){
+            if (isNew) {
                 storage.save(r);
-            }else {
+            } else {
                 storage.update(r.getUuid(), r);
             }
             response.sendRedirect("resume");
@@ -211,17 +223,32 @@ public class ResumeServlet extends HttpServlet {
                             continue;
                         }
                         for (int j = 0; j < titles.length; j++) {
-                            if (!UtilsResume.isEmpty(titles[j])) {
-                                if (UtilsResume.isEmpty(startDates[j])) {
+                            if (!UtilsResume.isEmpty(titles[j] ) || !UtilsResume.isEmpty(descriptions[j])) {
+                                if (UtilsResume.isEmpty(startDates[j]) ||
+                                        startDates[j] == DateUtil.outputDate(DateUtil.MIN)) {
                                     violations.add("Для секции " + type.name() + " " + name + " введите дату начала");
                                     continue;
                                 }
-                                if (UtilsResume.isEmpty(endDates[j])) {
+                                if (UtilsResume.isEmpty(endDates[j]) ||
+                                        endDates[j] == DateUtil.outputDate(DateUtil.MIN)) {
                                     violations.add("Для секции " + type.name() + " " + name + " введите дату окончания");
+                                    continue;
+                                }
+                                LocalDate startD = DateUtil.inputDate(startDates[j]);
+                                LocalDate endD = DateUtil.inputDate(endDates[j]);
+                                if ((startD != null && endD != null ) &&
+                                        (startD.getYear() > endD.getYear() ||
+                                        startD.getYear() == endD.getYear() &&
+                                        startD.getMonthValue() > endD.getMonthValue()) ) {
+                                    violations.add("Для секции " + type.name() + " " + name + " дата конца должна быть больше даты начала");
                                     continue;
                                 }
                                 if (UtilsResume.isEmpty(descriptions[j])) {
                                     violations.add("Для секции " + type.name() + " " + name + " введите описание");
+                                    continue;
+                                }
+                                if (UtilsResume.isEmpty(titles[j])) {
+                                    violations.add("Для секции " + type.name() + " " + name + " введите название");
                                     continue;
                                 }
                             }

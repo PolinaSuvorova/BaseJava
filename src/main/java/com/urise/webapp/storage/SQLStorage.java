@@ -195,7 +195,7 @@ public class SQLStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         return sqlHelper.transactionalExecute(conn -> {
-            Map<String, Resume> resumes = new HashMap<>();
+            Map<String, Resume> resumes = new LinkedHashMap<>();
             try (PreparedStatement ps = conn.prepareStatement(
                     "SELECT * FROM resume " +
                             "ORDER BY full_name, uuid")) {
