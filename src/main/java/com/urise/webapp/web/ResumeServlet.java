@@ -99,9 +99,9 @@ public class ResumeServlet extends HttpServlet {
                     }
                     case ACHIEVEMENT, QUALIFICATIONS -> {
                         ArrayList<String> listString = new ArrayList<>();
-                        String[] lines = valueSection.split("\n", 0);
+                        String[] lines = valueSection.split("\r\n", 0);
                         Collections.addAll(listString, lines);
-                        listString.removeAll(Arrays.asList("", null));
+                        listString.removeAll(Arrays.asList("", null, "\\r"));
                         aSection = new ListTextSection(listString);
                     }
                     case EXPERIENCE, EDUCATION -> {
@@ -145,7 +145,11 @@ public class ResumeServlet extends HttpServlet {
                                                     descriptions[j]));
                                 }
                             }
-                            comp.add(new Company(periods, name, urls[i]));
+                            if ((periods != null && periods.size() != 0 ) ||
+                                    !UtilsResume.isEmpty(name) ||
+                                    !UtilsResume.isEmpty(urls[i])){
+                                comp.add(new Company(periods, name, urls[i]));
+                            }
                         }
 
                         if (comp != null) {
@@ -197,6 +201,7 @@ public class ResumeServlet extends HttpServlet {
                     }
                 }
                 case EXPERIENCE, EDUCATION -> {
+                    String[] urls = request.getParameterValues(type.name() + "url");
                     for (int i = 0; i < valuesSection.length; i++) {
                         String name = valuesSection[i];
                         String line = type.name() + i;
@@ -204,18 +209,20 @@ public class ResumeServlet extends HttpServlet {
                         String[] endDates = request.getParameterValues(line + "endDate");
                         String[] titles = request.getParameterValues(line + "title");
                         String[] descriptions = request.getParameterValues(line + "description");
-
                         if (UtilsResume.isEmpty(name) &&
-                                (startDates != null ||
-                                        endDates != null ||
-                                        titles != null ||
+                            UtilsResume.isEmpty(urls[i]) ){
+                            continue;
+                        }
+                        if (UtilsResume.isEmpty(name) &&
+                                (       titles != null ||
                                         descriptions != null)) {
                             violations.add("Для секции " + type.name() + " Название компании обязательно ");
                             continue;
-                        } else if (!UtilsResume.isEmpty(name) &&
+                        }
+                        if (!UtilsResume.isEmpty(name) &&
                                 (startDates == null ||
-                                        endDates == null ||
-                                        titles == null)) {
+                                 endDates == null ||
+                                 titles == null)) {
                             violations.add("Для секции " + type.name() + " " + name + " период и описание обязательны");
                             continue;
                         }
@@ -223,7 +230,7 @@ public class ResumeServlet extends HttpServlet {
                             continue;
                         }
                         for (int j = 0; j < titles.length; j++) {
-                            if (!UtilsResume.isEmpty(titles[j] ) || !UtilsResume.isEmpty(descriptions[j])) {
+                            if (!UtilsResume.isEmpty(titles[j]) || !UtilsResume.isEmpty(descriptions[j])) {
                                 if (UtilsResume.isEmpty(startDates[j]) ||
                                         startDates[j] == DateUtil.outputDate(DateUtil.MIN)) {
                                     violations.add("Для секции " + type.name() + " " + name + " введите дату начала");
@@ -236,10 +243,10 @@ public class ResumeServlet extends HttpServlet {
                                 }
                                 LocalDate startD = DateUtil.inputDate(startDates[j]);
                                 LocalDate endD = DateUtil.inputDate(endDates[j]);
-                                if ((startD != null && endD != null ) &&
+                                if ((startD != null && endD != null) &&
                                         (startD.getYear() > endD.getYear() ||
-                                        startD.getYear() == endD.getYear() &&
-                                        startD.getMonthValue() > endD.getMonthValue()) ) {
+                                                startD.getYear() == endD.getYear() &&
+                                                        startD.getMonthValue() > endD.getMonthValue())) {
                                     violations.add("Для секции " + type.name() + " " + name + " дата конца должна быть больше даты начала");
                                     continue;
                                 }
